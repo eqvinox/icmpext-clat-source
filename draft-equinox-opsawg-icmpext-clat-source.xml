@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-model href="rfc7991bis.rnc"?>
+<!-- Required for schema validation and schema-aware editing -->
+<!-- <?xml-stylesheet type="text/xsl" href="rfc2629.xslt" ?> -->
+<!-- This third-party XSLT can be enabled for direct transformations in XML processors, including most browsers -->
+
+<!DOCTYPE rfc [
+  <!ENTITY nbsp    "&#160;">
+  <!ENTITY zwsp   "&#8203;">
+  <!ENTITY nbhy   "&#8209;">
+  <!ENTITY wj     "&#8288;">
+]>
+<!-- If further character entities are required then they should be added to the DOCTYPE above.
+     Use of an external entity file is not recommended. -->
+
+<rfc
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  category="std"
+  docName="draft-equinox-opsawg-icmpext-clat-source"
+  ipr="trust200902"
+  obsoletes=""
+  updates=""
+  submissionType="IETF"
+  xml:lang="en"
+  version="3">
+  <front>
+    <title abbrev="icmpext-clat-source">ICMP Extensions for CLAT tracing</title>
+    <seriesInfo name="Internet-Draft" value="icmpext-clat-source"/>
+
+    <author fullname="David 'equinox' Lamparter" initials="D" surname="Lamparter">
+      <organization>NetDEF, Inc.</organization>
+      <address>
+        <postal>
+          <city>San Jose</city>
+          <country>USA</country>
+        </postal>
+        <email>equinox@diac24.net</email>
+        <email>equinox@opensourcerouting.org</email>
+      </address>
+    </author>
+
+    <date year="2024"/>
+    <area>Internet</area>
+    <workgroup>Operations and Management Area</workgroup>
+    <keyword>ipv6</keyword>
+    <keyword>ipv4</keyword>
+    <keyword>clat</keyword>
+    <keyword>traceroute</keyword>
+
+
+    <abstract>
+      <t>
+          This document suggests the creation of an ICMP Multi-part Extension
+          to carry the original IPv6 source address for Time Exceeded messages
+          translated to IPv4 by CLATs.
+      </t>
+    </abstract>
+  </front>
+
+  <middle>
+    <section>
+      <name>Introduction</name>
+      <t>
+          CLAT implementations translate received IPv6 packets into IPv4 for
+          consumption by legacy applications on the host.  While debugging such
+          a setup, operators may want to invoke an IPv4 traceroute in order to
+          observe the path as seen by an application.  In this case, the CLAT
+          will translate received ICMPv6 Time Exceeded into ICMP Time Exceeded.
+          When such a translation happens for a packet originating from a
+          native IPv6 router, the source IPv6 address is not translatable and
+          may be lost.
+      </t>
+      <t>
+          TBD: document existing workarounds (e.g. DNS fakery)
+      </t>
+    </section>
+
+    <section>
+      <name>Requirements Language</name>
+      <t>
+          The key words "MUST", "MUST NOT", "REQUIRED", "SHALL",
+          "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT
+          RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
+          interpreted as described in BCP 14 <xref target="RFC2119"/>
+          <xref target="RFC8174"/> when, and only when, they appear in
+          all capitals, as shown here.
+       </t>
+    </section>
+
+    <section anchor="xlat">
+      <name>Improved Translation Behavior</name>
+      <t>
+          Whenever a CLAT implementation generates an IPv4 ICMP packet from
+          an IPv6 packet, and the IPv6 source address does not match the NAT64
+          prefix (and is therefore not mappable to an IPv4 address), the
+          extension described in this document SHOULD be added to the ICMP
+          packet.
+      </t>
+      <t>
+          TBD: clarify whether allowed for NAT64'd packets
+      </t>
+      <t>
+          TBD: clarify use on messages other than Time Exceeded.  Especially
+          MTU exceeded may be useful too.
+      </t>
+      <t>
+          TBD: clarify IPv4 source address for consistency?  (maybe not,
+          would extend scope of this draft.)
+      </t>
+    </section>
+
+    <section anchor="ext">
+      <name>IPv6 Original Source Extension</name>
+      <t>
+          The suggested encoding to be appended<xref target="RFC4884"/> to
+          ICMP messages is as follows:
+      </t>
+      <figure align="center" anchor="fig_ext">
+        <artwork align="center"><![CDATA[
+       0                   1                   2                   3
+       0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+      |          Length = 20          |   Class TBD1  |  C-Type = 0   |
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+      |                                                               |
+      +                                                               +
+      |                  original IPv6 source address                 |
+      +                          16 octets                            +
+      |                                                               |
+      +                                                               +
+      |                                                               |
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+]]></artwork>
+      </figure>
+    </section>
+
+    <section anchor="security">
+      <name>Security Considerations</name>
+      <t>
+          TBD.  Should probably be local-only.
+      </t>
+    </section>
+    <section anchor="privacy">
+      <name>Privacy Considerations</name>
+      <t>
+          TBD
+      </t>
+    </section>
+    <section anchor="IANA">
+      <name>IANA Considerations</name>
+      <t>
+          This document requests that IANA allocates a "Class Value" from the
+          "ICMP Extension Object Classes and Class Sub-types" registry
+          created by <xref target="RFC4884"/> for use as described above.
+          The following entry should be appended:
+      </t>
+      <table>
+        <thead>
+          <tr><th>Class Value</th><th>Class Name</th><th>Reference</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>TBD1</td><td>Original IPv6 Source Address</td><td>[THIS DOCUMENT]</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </middle>
+
+  <back>
+    <references>
+      <name>References</name>
+      <references>
+        <name>Normative References</name>
+        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.2119.xml"/>
+        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.4884.xml"/>
+	<xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8174.xml"/>
+	<!-- TODO: add CLAT reference -->
+      </references>
+    </references>
+    <section anchor="Acknowledgements" numbered="false">
+      <name>Acknowledgements</name>
+      <t>
+          This document is the result of discussions with Jen Linkova and
+          Thomas Jensen.
+      </t>
+    </section>
+ </back>
+</rfc>
