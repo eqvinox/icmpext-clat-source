@@ -16,7 +16,7 @@
 <rfc
   xmlns:xi="http://www.w3.org/2001/XInclude"
   category="std"
-  docName="draft-equinox-opsawg-icmpext-clat-source"
+  docName="draft-equinox-intarea-icmpext-clat-source"
   ipr="trust200902"
   obsoletes=""
   updates=""
@@ -41,7 +41,7 @@
 
     <date year="2024"/>
     <area>Internet</area>
-    <workgroup>Operations and Management Area</workgroup>
+    <workgroup>Internet Area</workgroup>
     <keyword>ipv6</keyword>
     <keyword>ipv4</keyword>
     <keyword>clat</keyword>
