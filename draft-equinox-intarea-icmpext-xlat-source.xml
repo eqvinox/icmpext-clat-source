@@ -16,7 +16,7 @@
 <rfc
   xmlns:xi="http://www.w3.org/2001/XInclude"
   category="std"
-  docName="draft-equinox-intarea-icmpext-clat-source"
+  docName="draft-equinox-intarea-icmpext-xlat-source"
   ipr="trust200902"
   obsoletes=""
   updates=""
@@ -24,8 +24,8 @@
   xml:lang="en"
   version="3">
   <front>
-    <title abbrev="icmpext-clat-source">ICMP Extensions for IP/ICMP translators (XLATs)</title>
-    <seriesInfo name="Internet-Draft" value="icmpext-clat-source"/>
+    <title abbrev="icmpext-xlat-source">ICMP Extensions for IP/ICMP translators (XLATs)</title>
+    <seriesInfo name="Internet-Draft" value="icmpext-xlat-source"/>
 
     <author fullname="David 'equinox' Lamparter" initials="D" surname="Lamparter">
       <organization>NetDEF, Inc.</organization>
