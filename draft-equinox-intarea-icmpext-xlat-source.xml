@@ -70,6 +70,18 @@
           translated to ICMP by stateless (RFC6145) or stateful (RFC 6146) protocol translators.
       </t>
     </abstract>
+    <note removeInRFC="true">
+      <name>About This Document</name>
+      <t>
+          Source, version control history, and issue tracker for this draft can
+          be found at <eref target="https://github.com/eqvinox/icmpext-clat-source"/>.
+      </t>
+      <t>
+          (Note the draft was renamed (clat → xlat) prior to submission but
+          changing the repository name on github breaks too many things to be
+          worth the effort.)
+      </t>
+    </note>
   </front>
 
   <middle>
