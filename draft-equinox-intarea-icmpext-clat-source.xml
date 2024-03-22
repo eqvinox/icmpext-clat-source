@@ -24,7 +24,7 @@
   xml:lang="en"
   version="3">
   <front>
-    <title abbrev="icmpext-clat-source">ICMP Extensions for CLAT tracing</title>
+    <title abbrev="icmpext-clat-source">ICMP Extensions for IP/ICMP translators (XLATs)</title>
     <seriesInfo name="Internet-Draft" value="icmpext-clat-source"/>
 
     <author fullname="David 'equinox' Lamparter" initials="D" surname="Lamparter">
@@ -51,8 +51,8 @@
     <abstract>
       <t>
           This document suggests the creation of an ICMP Multi-part Extension
-          to carry the original IPv6 source address for Time Exceeded messages
-          translated to IPv4 by CLATs.
+          to carry the original IPv6 source address of ICMPv6 messages
+          translated to ICMP by stateless (RFC6145) or stateful (RFC 6146) protocol translators.
       </t>
     </abstract>
   </front>
@@ -61,18 +61,29 @@
     <section>
       <name>Introduction</name>
       <t>
-          CLAT implementations translate received IPv6 packets into IPv4 for
-          consumption by legacy applications on the host.  While debugging such
-          a setup, operators may want to invoke an IPv4 traceroute in order to
-          observe the path as seen by an application.  In this case, the CLAT
-          will translate received ICMPv6 Time Exceeded into ICMP Time Exceeded.
-          When such a translation happens for a packet originating from a
-          native IPv6 router, the source IPv6 address is not translatable and
-          may be lost.
-      </t>
+To allow communication between IPv6-only and IPv4-only devices, IPv4/IPv6 translators translate IPv6 and IPv4 packet headers according to the IP/ICMP Translation Algorithm defined in <xref target="RFC6145"/>.
+For example, 464XLAT (<xref target="RFC6877"/>) defines an architecture for providing IPv4 connectivity across an IPv6-only network. The solution contains two key elements: provider-side translator (PLAT) and customer-side translator (CLAT). CLAT implementations translate private IPv4 addresses to global IPv6 addresses, and vice versa, as defined in <xref target="RFC6145"/>. 
+</t>
+<t>
+
+To map IPv4 addresses to IPv6 ones the translators use the translation prefix (either a well-known or a network-specific one, see <xref target="RFC6052"/>). The resulting IPv6 addresses can be statelessly translated back to IPv4.
+However it's not the case for an arbitrary global IPv6 addresses. Those addresses can only be translated to IPv4 by a stateful translators. 
+</t>
+<t>
+One of scenarios when it might be required but not currently possible is translating ICMPv6 error messages send by intermediate nodes to the CLAT address in the 464XLAT envinronment. The most typical example is a diagnistic tool like traceroute sending packets to an IPv4 destination from an IPv6-only host.
+Received ICMPv6 Time Exceeded are translated to ICMP Time Exceeded. If those packets were originated from an IPv4 address and translated to ICMPv6 by the PLAT (NAT64) device, then the source address of such packet can be mapped back to IPv4 by removing the translation prefix. However ICMPv6 error messages sent by devices located between the IPv6-only host and the NAT64 device have "native" IPv6 source addresses, which can not be mapped back to IPv4.
+Those packets are usually dropped and tools like traceroute can not represent IPv6 intermediate hops in any meaningful way. Such behaviour complicates troubleshooting. It's also confusing for users and increases operational costs, as users report packet loss in the network based on traceroute output.
+</t>
       <t>
-          TBD: document existing workarounds (e.g. DNS fakery)
+Some CLAT implementations are known to workaround this issue by representing IPv6 addresses in IPv4 traceroute by using a reserved IPv4 address space and using the hop limit as the last octet, so an IPv6 device 5 hops away is shown as 225.0.0.5 etc.
       </t>
+<t>
+It should be noted that the similar issue occurs in IPv6 Data Center Environments when an ICMPv6 error message needs to be sent to an IPv4-only client.
+As per Section 4.8 of <xref target="RFC7755"/>, ICMPv6 error packets are usually dropped by the translator.
+</t>
+<t>
+This document proposes an ICMP extension so original IPv6 address of an ICMPv6 error message can be included into IMCP message and therefore passed to an application.
+</t>
     </section>
 
     <section>
@@ -90,18 +101,15 @@
     <section anchor="xlat">
       <name>Improved Translation Behavior</name>
       <t>
-          Whenever a CLAT implementation generates an IPv4 ICMP packet from
-          an IPv6 packet, and the IPv6 source address does not match the NAT64
+          Whenever a translator generates an IPv4 ICMP message from
+          an ICMPv6 packet, and the IPv6 source address does not match the NAT64
           prefix (and is therefore not mappable to an IPv4 address), the
           extension described in this document SHOULD be added to the ICMP
           packet.
       </t>
       <t>
-          TBD: clarify whether allowed for NAT64'd packets
-      </t>
-      <t>
-          TBD: clarify use on messages other than Time Exceeded.  Especially
-          MTU exceeded may be useful too.
+          The translator SHOULD NOT add the extension if the packet IPv6 source address
+is an IPv4 address mapped to an IPv6 address using the translation prefix known to the translator.
       </t>
       <t>
           TBD: clarify IPv4 source address for consistency?  (maybe not,
@@ -172,8 +180,14 @@
         <name>Normative References</name>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.2119.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.4884.xml"/>
+        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6052.xml"/>
+        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6145.xml"/>
+        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6877.xml"/>
 	<xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8174.xml"/>
-	<!-- TODO: add CLAT reference -->
+      </references>
+     <references>
+        <name>Informative References</name>
+        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.7755.xml"/>
       </references>
     </references>
     <section anchor="Acknowledgements" numbered="false">
