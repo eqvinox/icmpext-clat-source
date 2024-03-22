@@ -155,6 +155,22 @@ is an IPv4 address mapped to an IPv6 address using the translation prefix known 
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 ]]></artwork>
       </figure>
+      <t>
+          The Length, Class and C-Type fields are as defined in
+          <xref target="RFC4884"/> and filled in accordingly.  This document
+          describes only one encoding and uses C-Type 0 for it.  C-Type
+          MUST be set to 0 when appending this extension.  On receipt,
+          this extension MUST be ignored if C-Type is not 0 or if Length is
+          not 20.
+      </t>
+      <t>
+          The original IPv6 source address field is always 16 octets in length
+          and filled as described in this document.  It may contain any source
+          address possibly seen in an ICMPv6 packet.  This notably includes
+          link-local addresses, the IPv6 loopback address, and mapped IPv4
+          addresses.  Receivers MUST NOT reject addresses solely due to the
+          address not being a globally scoped IPv6 addresses.
+      </t>
     </section>
 
     <section anchor="security">
