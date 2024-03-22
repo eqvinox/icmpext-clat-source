@@ -38,6 +38,20 @@
         <email>equinox@opensourcerouting.org</email>
       </address>
     </author>
+    <author fullname="Jen Linkova" initials="J" surname="Linkova">
+      <organization>Google</organization>
+      <address>
+        <postal>
+          <street>1 Darling Island Rd</street>
+          <city>Pyrmont</city>
+          <region>NSW</region>
+          <code>2009</code>
+          <country>AU</country>
+        </postal>
+        <email>furry13@gmail.com</email>
+        <email>furry@google.com</email>
+      </address>
+    </author>
 
     <date year="2024"/>
     <area>Internet</area>
