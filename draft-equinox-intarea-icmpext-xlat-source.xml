@@ -21,6 +21,7 @@
   obsoletes=""
   updates=""
   submissionType="IETF"
+  consensus="true"
   xml:lang="en"
   version="3">
   <front>
