@@ -208,8 +208,7 @@ is an IPv4 address mapped to an IPv6 address using the translation prefix known 
     <section anchor="Acknowledgements" numbered="false">
       <name>Acknowledgements</name>
       <t>
-          This document is the result of discussions with Jen Linkova and
-          Thomas Jensen.
+          This document is the result of discussions with Thomas Jensen.
       </t>
     </section>
  </back>
