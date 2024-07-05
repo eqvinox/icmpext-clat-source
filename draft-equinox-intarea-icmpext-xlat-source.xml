@@ -16,17 +16,17 @@
 <rfc
   xmlns:xi="http://www.w3.org/2001/XInclude"
   category="std"
-  docName="draft-equinox-intarea-icmpext-xlat-source-00"
+  docName="draft-equinox-intarea-icmpext-xlat-source-01"
   ipr="trust200902"
   obsoletes=""
-  updates=""
+  updates="6145"
   submissionType="IETF"
   consensus="true"
   xml:lang="en"
   version="3">
   <front>
     <title abbrev="icmpext-xlat-source">ICMP Extensions for IP/ICMP translators (XLATs)</title>
-    <seriesInfo name="Internet-Draft" value="icmpext-xlat-source"/>
+    <seriesInfo name="Internet-Draft" value="draft-equinox-intarea-icmpext-xlat-source-01"/>
 
     <author fullname="David 'equinox' Lamparter" initials="D" surname="Lamparter">
       <organization>NetDEF, Inc.</organization>
@@ -126,26 +126,22 @@ This document proposes an ICMP extension so original IPv6 address of an ICMPv6 e
     </section>
 
     <section anchor="xlat">
-      <name>Improved Translation Behavior</name>
+      <name>Translation Behavior Overview</name>
       <t>
-          Whenever a translator generates an IPv4 ICMP message from
-          an ICMPv6 packet, and the IPv6 source address does not match the NAT64
+          Whenever a translator translates an ICMPv4 (<xref target="RFC0792"/>) packet from an ICMPv6 (<xref target="RFC4443"/>) one,
+          and the IPv6 source address in the outermost IPv6 header does not match the NAT64
           prefix (and is therefore not mappable to an IPv4 address), the
-          extension described in this document SHOULD be added to the ICMP
-          packet.
+          extension object (<xref target="RFC4884"/>) described in this document SHOULD be added to the ICMP
+          packet. 
       </t>
       <t>
           The translator SHOULD NOT add the extension if the packet IPv6 source address
 is an IPv4 address mapped to an IPv6 address using the translation prefix known to the translator.
       </t>
-      <t>
-          TBD: clarify IPv4 source address for consistency?  (maybe not,
-          would extend scope of this draft.)
-      </t>
     </section>
 
     <section anchor="ext">
-      <name>IPv6 Original Source Extension</name>
+      <name>IPv6 Original Source Extension Object Format</name>
       <t>
           The suggested encoding to be appended<xref target="RFC4884"/> to
           ICMP messages is as follows:
@@ -185,6 +181,102 @@ is an IPv4 address mapped to an IPv6 address using the translation prefix known 
       </t>
     </section>
 
+<section anchor="behave">
+<name>Translation Behavior</name>
+<t>
+IPv6 Original Source Extension Object SHOULD be added when transating:
+</t>
+<ul>
+<li>
+<t>
+ICMPv6 Destination Unreachable to ICMPv4 Destination Unreachable
+</t>
+</li>
+<li>
+<t>
+ICMPv6 Time Exceeded to ICMPv4 Time Exceeded.
+</t>
+</li>
+</ul>
+<t>
+IPv6 Original Source Extension Object MUST NOT be added when translating any other ICMP messages.
+</t>
+
+<section>
+<name>
+Adding New ICMP Extension Structure
+</name>
+<t>
+If the original ICMPv6 message does not contain an ICMP Extension Structure (as defined in Section 7 of <xref target="RFC4884"/>), the translator SHOULD append a new ICMP Extension Structure to the resulting ICMPv4 message.
+When adding the new Extension Structure, the translator MUST:
+</t>
+<ul>
+<li>
+<t>
+Create a new ICMP Extension Structure, containing one Extension Header and one IPv6 Original Source Extension object.
+</t>
+</li>
+<li>
+<t>
+Append that Extension Structure to the original ICMPv6  message.
+</t>
+</li>
+<li>
+<t>
+If the resulting packet size exceeds the minimum IPv6 MTU: truncate the embedded invoking packet by removing the trailing 24 octets (to accomodate for 4 octets of the extension header and 20 octets of the extension object).
+</t>
+</li>
+<li>
+<t>
+Set the length field of the ICMPv6 message to the length of the padded "original datagram" field, measured in 32-bit words.
+</t>
+</li>
+<li>
+<t>
+Translate the resulting ICMPv6 message to IPv6 as per <xref target="RFC6145"/>.
+</t>
+</li>
+</ul>
+</section>
+<section>
+<name>
+Adding IPv6 Original Source Extension Object to Existing ICMP Extension Structure
+</name>
+<t>
+If the original ICMPv6 message already contains an ICMP Extension Structure,  the translator SHOULD append an IPv6 Original Source Extension object to that structure.
+When appending the object, the translator MUST:
+</t>
+<ul>
+<li>
+<t>
+Append  an IPv6 Original Source Extension object to the Extension Structure.
+</t>
+</li>
+<li>
+<t>
+Update the checksum field of the Extension Header accordingly.
+</t>
+</li>
+<li>
+<t>
+If the resulting packet size exceeds the minimum IPv6 MTU: truncate the embedded invoking packet by removing the trailing 20 octets (to accomodate for 20 octets of the extension object) and update the length field of the ICMPv6 message
+</t>
+</li>
+<li>
+<t>
+Translate the resulting ICMPv6 message to IPv6 as per <xref target="RFC6145"/>.
+</t>
+</li>
+</ul>
+</section>
+</section>
+
+<section>
+<name>
+Updates to RFC6145
+</name>
+</section>
+
     <section anchor="security">
       <name>Security Considerations</name>
       <t>
@@ -221,7 +313,9 @@ is an IPv4 address mapped to an IPv6 address using the translation prefix known 
       <name>References</name>
       <references>
         <name>Normative References</name>
+        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.0792.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.2119.xml"/>
+        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.4443.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.4884.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6052.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6145.xml"/>
@@ -237,6 +331,7 @@ is an IPv4 address mapped to an IPv6 address using the translation prefix known 
       <name>Acknowledgements</name>
       <t>
           This document is the result of discussions with Thomas Jensen.
+          The authors would like to thank Darren Dukes, Bill Fenner for their feedback, comments and guidance.
       </t>
     </section>
  </back>
