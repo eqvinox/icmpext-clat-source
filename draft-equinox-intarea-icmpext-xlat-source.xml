@@ -65,7 +65,7 @@
 
     <abstract>
       <t>
-          This document proposes allocating a dedicated IPv4 netblock for translating arbitrary (non-IPv4-translatable) IPv6 addresses
+          This document proposes allocating a dedicated IPv4 address for translating arbitrary (non-IPv4-translatable) IPv6 addresses
 and suggests the creation of an ICMP Multi-part Extension
           to carry the original IPv6 source address of ICMPv6 messages
           translated to ICMP by stateless (RFC7915) or stateful (RFC 6146) protocol translators.
@@ -110,7 +110,7 @@ It should be noted that the similar issue occurs in IPv6 Data Center Environment
 As per Section 4.8 of <xref target="RFC7755"/>, ICMPv6 error packets are usually dropped by the translator.
 </t>
 <t>
-This document introduces a dedicated IPv4 prefix to translate arbitrary global IPv6 addresses in ICMPv6 error messages, and proposes an ICMP extension so original IPv6 address of an ICMPv6 error message can be included into IMCP message and therefore passed to an application.
+This document introduces a dedicated IPv4 address to translate arbitrary global IPv6 addresses in ICMPv6 error messages, and proposes an ICMP extension so original IPv6 address of an ICMPv6 error message can be included into IMCP message and therefore passed to an application.
 </t>
     </section>
 
@@ -141,20 +141,19 @@ Append an extension object (<xref target="RFC4884"/>) described in this document
 </li>
 <li>
 <t>
-Perform stateful translation of the IPv6 source address to an IPv4 address from the special prefix.
+Perform stateful translation of the IPv6 source address to 192.0.0.11.
 </t>
 </li>
 </ul>
       <t>
-          The translator SHOULD NOT use the dedicated IPv4 prefix defined in this document and SHOULD NOT add the extension if the packet IPv6 source address
+          The translator SHOULD NOT use 192.0.0.11/32 to translate the source IPv6 address and SHOULD NOT add the extension if the packet IPv6 source address
 is an IPv4 address mapped to an IPv6 address using the translation prefix known to the translator, of if the translator has a stateful entry for the given IPv6 address mapped to another IPv4 address.
       </t>
     </section>
 <section anchor="ipv4">
-<name>Dedicated IPv4 Space for Stateful Translation of Global IPv6 Addresses</name>
+<name>Dedicated IPv4 Address for Stateful Translation of Global IPv6 Addresses</name>
 <t>
-This document proposed allocating a dedicated IPv4 prefix 192.0.0.32/27 to use for statefully translating global IPv6 addresses in ICMPv6 error messages in scenarious, when the transator doesn't have any existing entry to use for translating such an address.
-The prefix length is chosen so up to 32 different nodes can be represended (for example, up to 32 differernt hops in traceroute).
+This document proposed allocating a dedicated IPv4 192.0.0.11/32 to use for statefully translating global IPv6 addresses in ICMPv6 error messages in scenarious, when the transator doesn't have any existing entry to use for translating such an address.
 </t>
 </section>
 
@@ -296,9 +295,9 @@ Translate the resulting ICMPv6 message to IPv6 as per <xref target="RFC7915"/>.
 </section>
 
 <section>
-<name>Translating Arbitrary IPv6 Source Addresses Using the Dedicated IPv4 Netblock</name>
+<name>Translating Arbitrary IPv6 Source Addresses Using the Dedicated IPv4 Address</name>
 <t>
-The translator SHOULD use the dedicated IPv4 prefix 192.0.0.32/27 for translating IPv6 source addresses if all of the following conditions are met:
+The translator SHOULD use the dedicated IPv4 192.0.0.11/32 for translating IPv6 source addresses if all of the following conditions are met:
 </t>
 <ul>
 <li>
@@ -330,7 +329,7 @@ the IPv6 source address in the outermost IPv6 header does not match the NAT64 pr
 </li>
 <li>
 <t>
-The translator does not have an explicit address mapping (<xref target="RFC7757"/>) configured for the given global IPv6 address to an IPv4 address which doesn't belong to 192.0.0.32/27.
+The translator does not have an explicit address mapping (<xref target="RFC7757"/>) configured for the given global IPv6 address to an IPv4 address .
 </t>
 </li>
 </ul>
@@ -400,12 +399,12 @@ If valid IPv6 source address in the outermost IPv6 header of the ICMPv6 messages
         </tbody>
       </table>
 <t>
-	This document also requests that IANA allocates a /27 prefix (proposed prefix: 192.0.0.32/27) and updates 
+	This document also requests that IANA allocates an IPv4 address 192.0.0.11/32) and updates 
  the IPv4 Special-Purpose Address Registry available
    at (http://www.iana.org/assignments/iana-ipv4-special-registry/) with the following:
 </t>
 <t>
-Address Block: TBD2
+Address Block: 192.0.0.11/32
 </t>
 <t>
 Name:  [TBA IN THE NEXT VERSION OF THE DRAFT]
