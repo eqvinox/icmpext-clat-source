@@ -16,7 +16,7 @@
 <rfc
   xmlns:xi="http://www.w3.org/2001/XInclude"
   category="std"
-  docName="draft-equinox-intarea-icmpext-xlat-source-01"
+  docName="draft-equinox-v6ops-icmpext-xlat-v6only-source-00"
   ipr="trust200902"
   obsoletes=""
   updates="7915"
@@ -25,8 +25,8 @@
   xml:lang="en"
   version="3">
   <front>
-    <title abbrev="icmpext-xlat-source">ICMP Extensions for IP/ICMP translators (XLATs)</title>
-    <seriesInfo name="Internet-Draft" value="draft-equinox-intarea-icmpext-xlat-source-01"/>
+    <title abbrev="icmpext-xlat-source">Using Dummy IPv4 Address and Node Identification Extensions for IP/ICMP translators (XLATs)</title>
+    <seriesInfo name="Internet-Draft" value="draft-equinox-v6ops-icmpext-xlat-v6only-source-00"/>
 
     <author fullname="David 'equinox' Lamparter" initials="D" surname="Lamparter">
       <organization>NetDEF, Inc.</organization>
@@ -55,20 +55,18 @@
     </author>
 
     <date year="2024"/>
-    <area>Internet</area>
-    <workgroup>Internet Area</workgroup>
+    <area>Ops</area>
+    <workgroup>IPv6 operations</workgroup>
     <keyword>ipv6</keyword>
     <keyword>ipv4</keyword>
     <keyword>clat</keyword>
     <keyword>traceroute</keyword>
+    <keyword>nat64</keyword>
 
 
     <abstract>
       <t>
-          This document proposes allocating a dedicated IPv4 address for translating arbitrary (non-IPv4-translatable) IPv6 addresses
-and suggests the creation of an ICMP Multi-part Extension
-          to carry the original IPv6 source address of ICMPv6 messages
-          translated to ICMP by stateless (RFC7915) or stateful (RFC 6146) protocol translators.
+          This document suggests that when a source IPv6 address of an ICMPv6 message can not be translated to an IPv4 address, the protocol translators use the dummy IPv4 address (192.0.0.8) to translate the IPv6 source address, and utilize the ICMP extension for Node Identification (draft-ietf-intarea-extended-icmp-nodeid) to carry the original IPv6 source address of ICMPv6 messages.
       </t>
     </abstract>
     <note removeInRFC="true">
@@ -95,7 +93,7 @@ For example, 464XLAT (<xref target="RFC6877"/>) defines an architecture for prov
 <t>
 
 To map IPv4 addresses to IPv6 ones the translators use the translation prefix (either a well-known or a network-specific one, see <xref target="RFC6052"/>). The resulting IPv6 addresses can be statelessly translated back to IPv4.
-However it's not the case for an arbitrary global IPv6 addresses. Those addresses can only be translated to IPv4 by a stateful translators.
+However it's not the case for an arbitrary global IPv6 addresses. Those addresses can only be translated to IPv4 by a stateful translators and only if the corresponding translation rule exists.
 </t>
 <t>
 One of scenarios when it might be required but not currently possible is translating ICMPv6 error messages send by intermediate nodes to the CLAT address in the 464XLAT envinronment. The most typical example is a diagnistic tool like traceroute sending packets to an IPv4 destination from an IPv6-only host.
@@ -110,7 +108,8 @@ It should be noted that the similar issue occurs in IPv6 Data Center Environment
 As per Section 4.8 of <xref target="RFC7755"/>, ICMPv6 error packets are usually dropped by the translator.
 </t>
 <t>
-This document introduces a dedicated IPv4 address to translate arbitrary global IPv6 addresses in ICMPv6 error messages, and proposes an ICMP extension so original IPv6 address of an ICMPv6 error message can be included into IMCP message and therefore passed to an application.
+<xref target="I-D.ietf-intarea-extended-icmp-nodeid"/> defines the Node Identification Object which can carry an IP Address Sub-Object, containing an IP address.
+This document proposes that when an ICMPv6 error message is translated to an ICMP one, and the IPv6 source address can not be mapped or translated to an IPv4 one, the translator uses the dummy IPv4 address as an IPv4 source one and appends the Node Identification Object with the IP Address Sub-Object, containing the original IPv6 address of an ICMPv6 error message.
 </t>
     </section>
 
@@ -126,85 +125,41 @@ This document introduces a dedicated IPv4 address to translate arbitrary global 
        </t>
     </section>
 
-    <section anchor="xlat">
-      <name>Translation Behavior Overview</name>
-      <t>
-          Whenever a translator translates an ICMPv4 (<xref target="RFC0792"/>) packet from an ICMPv6 (<xref target="RFC4443"/>) one,
-          and the IPv6 source address in the outermost IPv6 header does not match the NAT64
-          prefix (and is therefore not mappable to an IPv4 address), the translator SHOULD:
-</t>
-<ul>
-<li>
+<section>
+<name>Terminology</name>
+
 <t>
-Append an extension object (<xref target="RFC4884"/>) described in this document to the ICMPv6 packet before translation.
+Translator: a device performing translaton between IPv6 and IPv4 packet headers according to the IP/ICMP Translation Algorithm defined in <xref target="RFC7915"/>. Translators can be stateless (<xref target="RFC7915"/>) or stateful (<xref target="RFC6146"/>).
 </t>
-</li>
-<li>
 <t>
-Perform stateful translation of the IPv6 source address to 192.0.0.11.
+Translatable IPv6 address: an IPv6 address which matches the NAT64 prefix known to the translator, or for which the translator has a stateful entry, mapping that IPv6 address to an IPv4 one.
 </t>
-</li>
-</ul>
-      <t>
-          The translator SHOULD NOT use 192.0.0.11/32 to translate the source IPv6 address and SHOULD NOT add the extension if the packet IPv6 source address
-is an IPv4 address mapped to an IPv6 address using the translation prefix known to the translator, of if the translator has a stateful entry for the given IPv6 address mapped to another IPv4 address.
-      </t>
-    </section>
-<section anchor="ipv4">
-<name>Dedicated IPv4 Address for Stateful Translation of Global IPv6 Addresses</name>
 <t>
-This document proposed allocating a dedicated IPv4 192.0.0.11/32 to use for statefully translating global IPv6 addresses in ICMPv6 error messages in scenarious, when the transator doesn't have any existing entry to use for translating such an address.
+Untranslatable IPv6 address: an IPv6 address which does not match the NAT64 prefix(es) configured on the translator, and for which the translator does not have a stateful entry, mapping this IPv6 address to an IPv4 one. 
 </t>
+
 </section>
 
-    <section anchor="ext">
-      <name>IPv6 Original Source Extension Object Format</name>
+    <section anchor="xlat">
+      <name>Translation Behavior</name>
+
+      <section anchor="xlat-overview">
+      <name>Overview</name>
       <t>
-          The suggested encoding to be appended<xref target="RFC4884"/> to
-          ICMP messages is as follows:
-      </t>
-      <figure align="center" anchor="fig_ext">
-        <artwork align="center"><![CDATA[
- 0                   1                   2                   3
- 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|          Length = 20          |   Class TBD1  |  C-Type = 0   |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|                                                               |
-+                                                               +
-|                  original IPv6 source address                 |
-+                          16 octets                            +
-|                                                               |
-+                                                               +
-|                                                               |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-]]></artwork>
-      </figure>
+          Whenever a translator translates an ICMPv6 Destination Unreachable, ICMPv6 Time Exceeded or ICMPv6 Packet too Big (<xref target="RFC4443"/>) to the corresponding ICMPv4 (<xref target="RFC0792"/>) message, and the IPv6 source address in the outermost IPv6 header is untranslatable one, the translator SHOULD use the dummy IPv4 address (192.0.0.8) as IPv4 source address for the translated packet.
+</t>
+<t>
+To preserve the original IPv6 source address of the packet, the translator SHOULD append a Node Identification Object (<xref target="I-D.ietf-intarea-extended-icmp-nodeid"/>) with the IP Address Sub-Object containing the IPv6 source address of the ICMPv6 packet.
+</t>
       <t>
-          The Length, Class and C-Type fields are as defined in
-          <xref target="RFC4884"/> and filled in accordingly.  This document
-          describes only one encoding and uses C-Type 0 for it.  C-Type
-          MUST be set to 0 when appending this extension.  On receipt,
-          this extension MUST be ignored if C-Type is not 0 or if Length is
-          not 20.
-      </t>
-      <t>
-          The original IPv6 source address field is always 16 octets in length
-          and filled as described in this document.  It may contain any source
-          address possibly seen in an ICMPv6 packet.  This notably includes
-          link-local addresses, the IPv6 loopback address, and mapped IPv4
-          addresses.  Receivers MUST NOT reject addresses solely due to the
-          address not being a globally scoped IPv6 addresses.
+          The translator MUST NOT use 192.0.0.8/32 to translate the source IPv6 address and MUST NOT add the extension if the packet IPv6 source address is translatable.
       </t>
     </section>
 
-<section anchor="behave">
-<name>Translation Behavior</name>
-
 <section>
-<name>Adding IPv6 Original Source Extension Object</name>
+<name>Adding Node Identification Extension Object</name>
 <t>
-IPv6 Original Source Extension Object SHOULD be added when translating"
+Node Identification Extension Object SHOULD be added when translating:
 </t>
 <ul>
 <li>
@@ -217,62 +172,85 @@ ICMPv6 Destination Unreachable to ICMPv4 Destination Unreachable
 ICMPv6 Time Exceeded to ICMPv4 Time Exceeded.
 </t>
 </li>
+<li>
+<t>
+ICMPv6 Packet Too Big to ICMPv4 Destination Unreachable.
+</t>
+</li>
 </ul>
 <t>
-and  the IPv6 source address in the outermost IPv6 header does not match the NAT64 prefix.
+and the IPv6 source address in the outermost IPv6 header is untranslatable.
 </t>
 <t>
-IPv6 Original Source Extension Object MUST NOT be added in any other cases.
+Node Identification Extension Object MUST NOT be added in any other cases.
 </t>
+
+<t>
+When adding the Node Identification Extension Object, the translator MUST include the IP Address Sub-Object containing the original IPv6 source address of the packet, and MUST NOT include any other Sub-Objects.
+</t>
+
+<section>
+<name>Order of Operations and Translating ICMPv6 Packet Too Big</name>
+
+<t>
+This specification does not prescribe whether the Node Identification Extension Object is added before or after translating an ICMPv6 message to ICMPv4.
+This choice is up to the implementation. However ICMP Extensions can not be added to ICMPv6 Packet Too Big messages (see Section 4.6 of <xref target="RFC4884"/>). Therefore in order to be able to add the Node Identification Extension Object and preserve the original untranslatable IPv6 address, the translator needs to add the object to the resulting ICMPv4 packet after it's been translated from ICMPv6.
+The translator MAY choose not to append  the Node Identification Extension Object when translating ICMPv6 Packet Too Big to ICMPv4 Destination Unreachable.
+Such implementations SHOULD still translate ICMPv6 Packet Too Big frmom untranslatable sources using  192.0.0.8 as an IPv4 source address and SHOULD NOT drop those packets.
+</t>
+
+</section>
+
 
 <section>
 <name>
 Adding New ICMP Extension Structure
 </name>
 <t>
-If the original ICMPv6 message does not contain an ICMP Extension Structure (as defined in Section 7 of <xref target="RFC4884"/>), the translator SHOULD append a new ICMP Extension Structure to the resulting ICMPv4 message.
+If the original ICMPv6 message does not contain an ICMP Extension Structure (as defined in Section 7 of <xref target="RFC4884"/>), the translator SHOULD append a new ICMP Extension Structure to the ICMP message.
 When adding the new Extension Structure, the translator MUST:
 </t>
 <ul>
 <li>
 <t>
-Create a new ICMP Extension Structure, containing one Extension Header and one IPv6 Original Source Extension object.
+Create a new ICMP Extension Structure, containing one Extension Header and one Node Identification Extension object. 
+The Node Identification Extension object MUST contain a IP Address Sub-Object, carrying the IPv6 source address of the ICMPv6 message being transtaled.
 </t>
 </li>
 <li>
 <t>
-Append that Extension Structure to the original ICMPv6  message.
+Append that Extension Structure to the ICMP message.
 </t>
 </li>
 <li>
 <t>
-If the resulting packet size exceeds the minimum IPv6 MTU: truncate the embedded invoking packet by removing the trailing 24 octets (to accomodate for 4 octets of the extension header and 20 octets of the extension object).
+If the resulting packet size exceeds the minimum IPv6 MTU: truncate the embedded invoking packet by removing the trailing 28 octets (to accomodate for 4 octets of the extension header and 24 octets of the extension object).
 </t>
 </li>
 <li>
 <t>
-Set the length field of the ICMPv6 message to the length of the padded "original datagram" field, measured in 32-bit words.
-</t>
-</li>
-<li>
-<t>
-Translate the resulting ICMPv6 message to IPv6 as per <xref target="RFC7915"/>.
+Set the length field of the ICMP message to the length of the padded "original datagram" field, measured in 32-bit words.
 </t>
 </li>
 </ul>
 </section>
 <section>
 <name>
-Adding IPv6 Original Source Extension Object to Existing ICMP Extension Structure
+Adding Node Identification Extension Object to Existing ICMP Extension Structure
 </name>
 <t>
-If the original ICMPv6 message already contains an ICMP Extension Structure,  the translator SHOULD append an IPv6 Original Source Extension object to that structure.
+If the original ICMPv6 message already contains an ICMP Extension Structure, the translator SHOULD append a Node Identification Extension object containing the IP Address Sub-Object to that structure.
 When appending the object, the translator MUST:
 </t>
 <ul>
 <li>
 <t>
-Append  an IPv6 Original Source Extension object to the Extension Structure.
+Create a Node Identification Extension object containing the IP Address Sub-Object. The IP Address Sub-Object MUST contain the original source IPv6 address of the ICMPv6 message being translated.
+</t>
+</li>
+<li>
+<t>
+Append Node Identification Extension object to the Extension Structure.
 </t>
 </li>
 <li>
@@ -282,64 +260,13 @@ Update the checksum field of the Extension Header accordingly.
 </li>
 <li>
 <t>
-If the resulting packet size exceeds the minimum IPv6 MTU: truncate the embedded invoking packet by removing the trailing 20 octets (to accomodate for 20 octets of the extension object) and update the length field of the ICMPv6 message
-</t>
-</li>
-<li>
-<t>
-Translate the resulting ICMPv6 message to IPv6 as per <xref target="RFC7915"/>.
+If the resulting packet size exceeds the minimum IPv6 MTU: truncate the embedded invoking packet by removing the trailing 24 octets (to accomodate for 24 octets of the extension object) and update the length field of the ICMP message
 </t>
 </li>
 </ul>
 </section>
 </section>
 
-<section>
-<name>Translating Arbitrary IPv6 Source Addresses Using the Dedicated IPv4 Address</name>
-<t>
-The translator SHOULD use the dedicated IPv4 192.0.0.11/32 for translating IPv6 source addresses if all of the following conditions are met:
-</t>
-<ul>
-<li>
-<t>
-The packet being translated is one of the following:
-</t>
-<ul>
-<li>
-<t>
-ICMPv6 Destination Unreachable
-</t>
-</li>
-<li>
-<t>
-ICMPv6 Time Exceeded
-</t>
-</li>
-<li>
-<t>
-ICMPv6 Packet Too Big
-</t>
-</li>
-</ul>
-</li>
-<li>
-<t>
-the IPv6 source address in the outermost IPv6 header does not match the NAT64 prefix (and is therefore not mappable to an IPv4 address).
-</t>
-</li>
-<li>
-<t>
-The translator does not have an explicit address mapping (<xref target="RFC7757"/>) configured for the given global IPv6 address to an IPv4 address .
-</t>
-</li>
-</ul>
-
-<t>
-it should be noted that the IPv6 Original Source Extension Object can not be added to ICMPv6 Packet Too Big messages (see Section 4.6 of <xref target="RFC4884"/>). 
-At the same time it's highly desirable to ensure that translators translate those messages even if the IPv6 source address in the outermost IPv6 header does not match the NAT64 prefix (and is therefore not mappable to an IPv4 address), as those messages are crucial for Path MTU Discovery.
-</t>
-
-</section>
 </section>
 
 <section>
@@ -373,66 +300,20 @@ If valid IPv6 source address in the outermost IPv6 header of the ICMPv6 messages
     <section anchor="security">
       <name>Security Considerations</name>
       <t>
-          TBD.  Should probably be local-only.
+          TBD. 
       </t>
     </section>
     <section anchor="privacy">
       <name>Privacy Considerations</name>
       <t>
-          TBD
+This document does not introduce any privacy considerations.
       </t>
     </section>
     <section anchor="IANA">
       <name>IANA Considerations</name>
       <t>
-          This document requests that IANA allocates a "Class Value" from the
-          "ICMP Extension Object Classes and Class Sub-types" registry
-          created by <xref target="RFC4884"/> for use as described above.
-          The following entry should be appended:
+This memo includes no request to IANA.
       </t>
-      <table>
-        <thead>
-          <tr><th>Class Value</th><th>Class Name</th><th>Reference</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>TBD1</td><td>Original IPv6 Source Address</td><td>[THIS DOCUMENT]</td></tr>
-        </tbody>
-      </table>
-<t>
-	This document also requests that IANA allocates an IPv4 address 192.0.0.11/32) and updates 
- the IPv4 Special-Purpose Address Registry available
-   at (http://www.iana.org/assignments/iana-ipv4-special-registry/) with the following:
-</t>
-<t>
-Address Block: 192.0.0.11/32
-</t>
-<t>
-Name:  [TBA IN THE NEXT VERSION OF THE DRAFT]
-</t>
-<t>
-RFC:  [THIS DOCUMENT]
-</t>
-<t>
-Allocation Date:  TBD3
-</t>
-<t>
-Termination Date:  N/A
-</t>
-<t>
-Source:  True
-</t>
-<t>
-Destination: False
-</t>
-<t>
-Forwardable:  False
-</t>
-<t>
-Global:  False
-</t>
-<t>
-Reserved-by-Protocol:  False
-</t>
     </section>
   </middle>
 
@@ -450,10 +331,13 @@ Reserved-by-Protocol:  False
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6877.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.7757.xml"/>
 	<xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8174.xml"/>
+<xi:include href="https://bib.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-intarea-extended-icmp-nodeid.xml"/>
       </references>
      <references>
         <name>Informative References</name>
+        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6146.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.7755.xml"/>
+        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.7600.xml"/>
       </references>
     </references>
     <section anchor="Acknowledgements" numbered="false">
