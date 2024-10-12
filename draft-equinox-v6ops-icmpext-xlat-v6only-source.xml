@@ -146,10 +146,10 @@ Untranslatable IPv6 address: an IPv6 address which does not match the NAT64 pref
       <section anchor="xlat-overview">
       <name>Overview</name>
       <t>
-          Whenever a translator translates an ICMPv6 Destination Unreachable, ICMPv6 Time Exceeded or ICMPv6 Packet Too Big (<xref target="RFC4443"/>) to the corresponding ICMPv4 (<xref target="RFC0792"/>) message, and the IPv6 source address in the outermost IPv6 header is untranslatable one, the translator SHOULD use the dummy IPv4 address (192.0.0.8) as IPv4 source address for the translated packet.
+          Whenever a translator translates an ICMPv6 Destination Unreachable, ICMPv6 Time Exceeded or ICMPv6 Packet Too Big (<xref target="RFC4443"/>) to the corresponding ICMPv4 (<xref target="RFC0792"/>) message, and the IPv6 source address in the outermost IPv6 header is an untranslatable one, the translator SHOULD use the dummy IPv4 address (192.0.0.8) as IPv4 source address for the translated packet.
 </t>
 <t>
-To preserve the original IPv6 source address of the packet, the translator SHOULD append a Node Identification Object (<xref target="I-D.ietf-intarea-extended-icmp-nodeid"/>) with the IP Address Sub-Object containing the IPv6 source address of the ICMPv6 packet.
+To preserve the original IPv6 source address of the packet, the translator SHOULD append a Node Identification Object (<xref target="I-D.ietf-intarea-extended-icmp-nodeid"/>) with an IP Address Sub-Object containing the IPv6 source address of the ICMPv6 packet.
 </t>
       <t>
           The translator MUST NOT use 192.0.0.8/32 to translate the source IPv6 address and MUST NOT add the extension if the packet IPv6 source address is translatable.
@@ -159,7 +159,7 @@ To preserve the original IPv6 source address of the packet, the translator SHOUL
 <section>
 <name>Adding Node Identification Extension Object</name>
 <t>
-Node Identification Extension Object SHOULD be added when translating:
+A Node Identification Extension Object SHOULD be added when translating:
 </t>
 <ul>
 <li>
