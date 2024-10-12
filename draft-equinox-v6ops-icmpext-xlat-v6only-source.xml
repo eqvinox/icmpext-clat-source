@@ -96,7 +96,7 @@ To map IPv4 addresses to IPv6 ones the translators use the translation prefix (e
 However it's not the case for an arbitrary global IPv6 addresses. Those addresses can only be translated to IPv4 by a stateful translators and only if the corresponding translation rule exists.
 </t>
 <t>
-One of scenarios when it might be required but not currently possible is translating ICMPv6 error messages send by intermediate nodes to the CLAT address in the 464XLAT envinronment. The most typical example is a diagnistic tool like traceroute sending packets to an IPv4 destination from an IPv6-only host.
+One of scenarios when it might be required but not currently possible is translating ICMPv6 error messages send by intermediate nodes to the CLAT address in the 464XLAT environment. The most typical example is a diagnostic tool like traceroute sending packets to an IPv4 destination from an IPv6-only host.
 Received ICMPv6 Time Exceeded are translated to ICMP Time Exceeded. If those packets were originated from an IPv4 address and translated to ICMPv6 by the PLAT (NAT64) device, then the source address of such packet can be mapped back to IPv4 by removing the translation prefix. However ICMPv6 error messages sent by devices located between the IPv6-only host and the NAT64 device have "native" IPv6 source addresses, which can not be mapped back to IPv4.
 Those packets are usually dropped and tools like traceroute can not represent IPv6 intermediate hops in any meaningful way. Such behaviour complicates troubleshooting. It's also confusing for users and increases operational costs, as users report packet loss in the network based on traceroute output.
 </t>
@@ -129,7 +129,7 @@ This document proposes that when an ICMPv6 error message is translated to an ICM
 <name>Terminology</name>
 
 <t>
-Translator: a device performing translaton between IPv6 and IPv4 packet headers according to the IP/ICMP Translation Algorithm defined in <xref target="RFC7915"/>. Translators can be stateless (<xref target="RFC7915"/>) or stateful (<xref target="RFC6146"/>).
+Translator: a device performing translation between IPv6 and IPv4 packet headers according to the IP/ICMP Translation Algorithm defined in <xref target="RFC7915"/>. Translators can be stateless (<xref target="RFC7915"/>) or stateful (<xref target="RFC6146"/>).
 </t>
 <t>
 Translatable IPv6 address: an IPv6 address which matches the NAT64 prefix known to the translator, or for which the translator has a stateful entry, mapping that IPv6 address to an IPv4 one.
@@ -146,7 +146,7 @@ Untranslatable IPv6 address: an IPv6 address which does not match the NAT64 pref
       <section anchor="xlat-overview">
       <name>Overview</name>
       <t>
-          Whenever a translator translates an ICMPv6 Destination Unreachable, ICMPv6 Time Exceeded or ICMPv6 Packet too Big (<xref target="RFC4443"/>) to the corresponding ICMPv4 (<xref target="RFC0792"/>) message, and the IPv6 source address in the outermost IPv6 header is untranslatable one, the translator SHOULD use the dummy IPv4 address (192.0.0.8) as IPv4 source address for the translated packet.
+          Whenever a translator translates an ICMPv6 Destination Unreachable, ICMPv6 Time Exceeded or ICMPv6 Packet Too Big (<xref target="RFC4443"/>) to the corresponding ICMPv4 (<xref target="RFC0792"/>) message, and the IPv6 source address in the outermost IPv6 header is untranslatable one, the translator SHOULD use the dummy IPv4 address (192.0.0.8) as IPv4 source address for the translated packet.
 </t>
 <t>
 To preserve the original IPv6 source address of the packet, the translator SHOULD append a Node Identification Object (<xref target="I-D.ietf-intarea-extended-icmp-nodeid"/>) with the IP Address Sub-Object containing the IPv6 source address of the ICMPv6 packet.
@@ -196,7 +196,7 @@ When adding the Node Identification Extension Object, the translator MUST includ
 This specification does not prescribe whether the Node Identification Extension Object is added before or after translating an ICMPv6 message to ICMPv4.
 This choice is up to the implementation. However ICMP Extensions can not be added to ICMPv6 Packet Too Big messages (see Section 4.6 of <xref target="RFC4884"/>). Therefore in order to be able to add the Node Identification Extension Object and preserve the original untranslatable IPv6 address, the translator needs to add the object to the resulting ICMPv4 packet after it's been translated from ICMPv6.
 The translator MAY choose not to append  the Node Identification Extension Object when translating ICMPv6 Packet Too Big to ICMPv4 Destination Unreachable.
-Such implementations SHOULD still translate ICMPv6 Packet Too Big frmom untranslatable sources using  192.0.0.8 as an IPv4 source address and SHOULD NOT drop those packets.
+Such implementations SHOULD still translate ICMPv6 Packet Too Big from untranslatable sources using  192.0.0.8 as an IPv4 source address and SHOULD NOT drop those packets.
 </t>
 
 </section>
@@ -214,7 +214,7 @@ When adding the new Extension Structure, the translator MUST:
 <li>
 <t>
 Create a new ICMP Extension Structure, containing one Extension Header and one Node Identification Extension object. 
-The Node Identification Extension object MUST contain a IP Address Sub-Object, carrying the IPv6 source address of the ICMPv6 message being transtaled.
+The Node Identification Extension object MUST contain a IP Address Sub-Object, carrying the IPv6 source address of the ICMPv6 message being translated.
 </t>
 </li>
 <li>
@@ -224,7 +224,7 @@ Append that Extension Structure to the ICMP message.
 </li>
 <li>
 <t>
-If the resulting packet size exceeds the minimum IPv6 MTU: truncate the embedded invoking packet by removing the trailing 28 octets (to accomodate for 4 octets of the extension header and 24 octets of the extension object).
+If the resulting packet size exceeds the minimum IPv6 MTU: truncate the embedded invoking packet by removing the trailing 28 octets (to accommodate for 4 octets of the extension header and 24 octets of the extension object).
 </t>
 </li>
 <li>
@@ -260,7 +260,7 @@ Update the checksum field of the Extension Header accordingly.
 </li>
 <li>
 <t>
-If the resulting packet size exceeds the minimum IPv6 MTU: truncate the embedded invoking packet by removing the trailing 24 octets (to accomodate for 24 octets of the extension object) and update the length field of the ICMP message
+If the resulting packet size exceeds the minimum IPv6 MTU: truncate the embedded invoking packet by removing the trailing 24 octets (to accommodate for 24 octets of the extension object) and update the length field of the ICMP message
 </t>
 </li>
 </ul>
