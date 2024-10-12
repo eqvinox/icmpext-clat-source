@@ -181,12 +181,9 @@ ICMPv6 Packet Too Big to ICMPv4 Destination Unreachable.
 <t>
 and the IPv6 source address in the outermost IPv6 header is untranslatable.
 </t>
-<t>
-Node Identification Extension Object MUST NOT be added in any other cases.
-</t>
 
 <t>
-When adding the Node Identification Extension Object, the translator MUST include the IP Address Sub-Object containing the original IPv6 source address of the packet, and MUST NOT include any other Sub-Objects.
+When adding the Node Identification Extension Object, the translator MUST include the IP Address Sub-Object containing the original IPv6 source address of the packet.
 </t>
 
 <section>
