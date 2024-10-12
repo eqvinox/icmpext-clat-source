@@ -181,12 +181,9 @@ ICMPv6 Packet Too Big to ICMPv4 Destination Unreachable.
 <t>
 and the IPv6 source address in the outermost IPv6 header is untranslatable.
 </t>
-<t>
-Node Identification Extension Object MUST NOT be added in any other cases.
-</t>
 
 <t>
-When adding the Node Identification Extension Object, the translator MUST include the IP Address Sub-Object containing the original IPv6 source address of the packet, and MUST NOT include any other Sub-Objects.
+When adding the Node Identification Extension Object, the translator MUST include the IP Address Sub-Object containing the original IPv6 source address of the packet.
 </t>
 
 <section>
@@ -329,7 +326,6 @@ This memo includes no request to IANA.
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6052.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.7915.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6877.xml"/>
-        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.7757.xml"/>
 	<xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8174.xml"/>
 <xi:include href="https://bib.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-intarea-extended-icmp-nodeid.xml"/>
       </references>
@@ -337,7 +333,6 @@ This memo includes no request to IANA.
         <name>Informative References</name>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6146.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.7755.xml"/>
-        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.7600.xml"/>
       </references>
     </references>
     <section anchor="Acknowledgements" numbered="false">
