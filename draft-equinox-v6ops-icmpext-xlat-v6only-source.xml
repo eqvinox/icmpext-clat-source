@@ -186,6 +186,28 @@ and the IPv6 source address in the outermost IPv6 header is untranslatable.
 When adding the Node Identification Extension Object, the translator MUST include the IP Address Sub-Object containing the original IPv6 source address of the packet.
 </t>
 
+<t>
+This document doesn't prescribe the exact algorith for adding the Node Identification Extension Object when translating ICMPv6 messages tto ICMPv4.
+<xref target="alg"/> describes one possible approach, but the choice is left to implementors, as long as the following requirements are met:
+</t>
+<ul>
+<li>
+<t>
+The resulting ICMPv6 message contains the Node Identification Extension Object with the IP Address Sub-Object.
+</t>
+</li>
+<li>
+<t>
+The checksum field of the Extension Header (Section 7 of <xref target="RFC4884"/>) is updated accordingly.
+</t>
+</li>
+<li>
+<t>
+The resulting ICMPv6 packet size doesn't exceed the minimum IPv6 MTU.
+</t>
+</li>
+</ul>
+
 <section>
 <name>Order of Operations and Translating ICMPv6 Packet Too Big</name>
 
@@ -199,69 +221,6 @@ Such implementations SHOULD still translate ICMPv6 Packet Too Big from untransla
 </section>
 
 
-<section>
-<name>
-Adding New ICMP Extension Structure
-</name>
-<t>
-If the original ICMPv6 message does not contain an ICMP Extension Structure (as defined in Section 7 of <xref target="RFC4884"/>), the translator SHOULD append a new ICMP Extension Structure to the ICMP message.
-When adding the new Extension Structure, the translator MUST:
-</t>
-<ul>
-<li>
-<t>
-Create a new ICMP Extension Structure, containing one Extension Header and one Node Identification Extension object. 
-The Node Identification Extension object MUST contain a IP Address Sub-Object, carrying the IPv6 source address of the ICMPv6 message being translated.
-</t>
-</li>
-<li>
-<t>
-Append that Extension Structure to the ICMP message.
-</t>
-</li>
-<li>
-<t>
-If the resulting packet size exceeds the minimum IPv6 MTU: truncate the embedded invoking packet by removing the trailing 28 octets (to accommodate for 4 octets of the extension header and 24 octets of the extension object).
-</t>
-</li>
-<li>
-<t>
-Set the length field of the ICMP message to the length of the padded "original datagram" field, measured in 32-bit words.
-</t>
-</li>
-</ul>
-</section>
-<section>
-<name>
-Adding Node Identification Extension Object to Existing ICMP Extension Structure
-</name>
-<t>
-If the original ICMPv6 message already contains an ICMP Extension Structure, the translator SHOULD append a Node Identification Extension object containing the IP Address Sub-Object to that structure.
-When appending the object, the translator MUST:
-</t>
-<ul>
-<li>
-<t>
-Create a Node Identification Extension object containing the IP Address Sub-Object. The IP Address Sub-Object MUST contain the original source IPv6 address of the ICMPv6 message being translated.
-</t>
-</li>
-<li>
-<t>
-Append Node Identification Extension object to the Extension Structure.
-</t>
-</li>
-<li>
-<t>
-Update the checksum field of the Extension Header accordingly.
-</t>
-</li>
-<li>
-<t>
-If the resulting packet size exceeds the minimum IPv6 MTU: truncate the embedded invoking packet by removing the trailing 24 octets (to accommodate for 24 octets of the extension object) and update the length field of the ICMP message
-</t>
-</li>
-</ul>
-</section>
 </section>
 
 </section>
@@ -321,6 +280,87 @@ This document does not introduce any privacy considerations.
 This memo includes no request to IANA.
       </t>
     </section>
+<section anchor="appendix">
+<name>Appendix</name>
+
+<section anchor="alg">
+<name>
+Adding Node Identification Extension Object: Suggested Algorithm
+</name>
+
+<section>
+<name>
+Adding New ICMP Extension Structure
+</name>
+<t>
+If the original ICMPv6 message does not contain an ICMP Extension Structure (as defined in Section 7 of <xref target="RFC4884"/>), the translator SHOULD append a new ICMP Extension Structure to the ICMP message.
+When adding the new Extension Structure, the translator MUST:
+</t>
+<ul>
+<li>
+<t>
+Create a new ICMP Extension Structure, containing one Extension Header and one Node Identification Extension object. 
+The Node Identification Extension object MUST contain a IP Address Sub-Object, carrying the IPv6 source address of the ICMPv6 message being translated.
+</t>
+</li>
+<li>
+<t>
+Append that Extension Structure to the ICMP message.
+</t>
+</li>
+<li>
+<t>
+If the resulting packet size exceeds the minimum IPv6 MTU: truncate the embedded invoking packet by removing the trailing 28 octets (to accommodate for 4 octets of the extension header and 24 octets of the extension object).
+</t>
+</li>
+<li>
+<t>
+Set the length field of the ICMP message to the length of the padded "original datagram" field, measured in 32-bit words.
+</t>
+</li>
+</ul>
+</section>
+
+
+<section>
+<name>
+Adding Node Identification Extension Object to Existing ICMP Extension Structure
+</name>
+<t>
+If the original ICMPv6 message already contains an ICMP Extension Structure, the translator SHOULD append a Node Identification Extension object containing the IP Address Sub-Object to that structure.
+When appending the object, the translator MUST:
+</t>
+<ul>
+<li>
+<t>
+Create a Node Identification Extension object containing the IP Address Sub-Object. The IP Address Sub-Object MUST contain the original source IPv6 address of the ICMPv6 message being translated.
+</t>
+</li>
+<li>
+<t>
+Append Node Identification Extension object to the Extension Structure.
+</t>
+</li>
+<li>
+<t>
+Update the checksum field of the Extension Header accordingly.
+</t>
+</li>
+<li>
+<t>
+If the resulting packet size exceeds the minimum IPv6 MTU: truncate the embedded invoking packet by removing the trailing 24 octets (to accommodate for 24 octets of the extension object) and update the length field of the ICMP message
+</t>
+</li>
+</ul>
+</section>
+
+
+
+
+</section>
+
+</section>
+
   </middle>
 
   <back>
@@ -348,7 +388,7 @@ This memo includes no request to IANA.
       <name>Acknowledgements</name>
       <t>
           This document is the result of discussions with Thomas Jensen.
-          The authors would like to thank Darren Dukes, Bill Fenner for their feedback, comments and guidance.
+          The authors would like to thank  Lorenzo Colitti, Darren Dukes, Bill Fenner, Tobias Fiebig for their feedback, comments and guidance.
       </t>
     </section>
  </back>
