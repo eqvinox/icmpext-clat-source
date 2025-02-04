@@ -274,23 +274,32 @@ Updates to RFC7915
 This document makes the following changes to Section 5.1 of <xref target="RFC7915"/>:
 </t>
 <t>
-The text in RFC7915 is as follows:
-</t>
+OLD TEXT</t>
 <blockquote>
 Source Address:  Mapped to an IPv4 address based on the algorithms presented in Section 6.
 </blockquote>
 <t>
-This document updates the text as follows:
+NEW TEXT
 </t>
 <blockquote>
 Source Address:  Mapped to an IPv4 address based on the algorithms presented in Section 6.
-When translating ICMPv4 error messages to ICMPv6 error messages and the valid IPv6 source address in the outermost IPv6 header does not match the prefix used in algorithmic mapping, the translator SHOULD follow the recommendations in draft-equinox-intarea-icmpext-xlat-source.
+When translating ICMPv6 error messages to ICMPv4 error messages and the valid IPv6 source address in the outermost IPv6 header can not be mapped to an IPv4 address (the address does not match the prefix used in algorithmic mapping and there are no static or stateful entries for that address), the translator SHOULD follow the recommendations in draft-equinox-intarea-icmpext-xlat-source.
 </blockquote>
 <t>
-This document also adds the following paragraph before the very last paragraph of Section 5.2 of <xref target="RFC7915"/> (before "Error payload:"):
+This document also updates the very last paragraph of Section 5.2 of <xref target="RFC7915"/> ("Error payload:") as follows:
+</t>
+<t>
+OLD TEXT:
 </t>
 <blockquote>
-If valid IPv6 source address in the outermost IPv6 header of the ICMPv6 messages does not match the prefix used in algorithmic mapping, the translator SHOULD follow the recommendations in draft-equinox-intarea-icmpext-xlat-source.
+For extensions not defined in [RFC4884], the translator passes the extensions as opaque bit strings and any IPv6 address literals contained therein will not be translated to IPv4 address literals; this may cause problems with processing of those ICMP extensions.
+</blockquote>
+<t>
+NEW TEXT:
+</t>
+<blockquote>
+For extensions not defined in [RFC4884], the translator passes the extensions as opaque bit strings and any IPv6 address literals contained therein will not be translated to IPv4 address literals; this may cause problems with processing of those ICMP extensions.
+If valid IPv6 source address in the outermost IPv6 header of the ICMPv6 messages  can not be mapped to an IPv4 address (the address does not match the prefix used in algorithmic mapping and there are no static or stateful entries for that address), the translator SHOULD follow the recommendations in draft-equinox-intarea-icmpext-xlat-source.
 </blockquote>
 </section>
 
