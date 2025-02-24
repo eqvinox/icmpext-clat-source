@@ -186,6 +186,28 @@ and the IPv6 source address in the outermost IPv6 header is untranslatable.
 When adding the Node Identification Extension Object, the translator MUST include the IP Address Sub-Object containing the original IPv6 source address of the packet.
 </t>
 
+<t>
+This document doesn't prescribe the exact algorith for adding the Node Identification Extension Object when translating ICMPv6 messages tto ICMPv4.
+<xref target="alg"/> describes one possible approach, but the choice is left to implementors, as long as the following requirements are met:
+</t>
+<ul>
+<li>
+<t>
+The resulting ICMPv6 message contains the Node Identification Extension Object with the IP Address Sub-Object.
+</t>
+</li>
+<li>
+<t>
+The checksum field of the Extension Header (Section 7 of <xref target="RFC4884"/>) is updated accordingly.
+</t>
+</li>
+<li>
+<t>
+The resulting ICMPv6 packet size doesn't exceed the minimum IPv6 MTU.
+</t>
+</li>
+</ul>
+
 <section>
 <name>Order of Operations and Translating ICMPv6 Packet Too Big</name>
 
@@ -198,6 +220,73 @@ Such implementations SHOULD still translate ICMPv6 Packet Too Big from untransla
 
 </section>
 
+
+</section>
+
+</section>
+
+<section>
+<name>
+Updates to RFC7915
+</name>
+<t>
+This document makes the following changes to Section 5.1 of <xref target="RFC7915"/>:
+</t>
+<t>
+OLD TEXT</t>
+<blockquote>
+Source Address:  Mapped to an IPv4 address based on the algorithms presented in Section 6.
+</blockquote>
+<t>
+NEW TEXT
+</t>
+<blockquote>
+Source Address:  Mapped to an IPv4 address based on the algorithms presented in Section 6.
+When translating ICMPv6 error messages to ICMPv4 error messages and the valid IPv6 source address in the outermost IPv6 header can not be mapped to an IPv4 address (the address does not match the prefix used in algorithmic mapping and there are no static or stateful entries for that address), the translator SHOULD follow the recommendations in draft-equinox-intarea-icmpext-xlat-source.
+</blockquote>
+<t>
+This document also updates the very last paragraph of Section 5.2 of <xref target="RFC7915"/> ("Error payload:") as follows:
+</t>
+<t>
+OLD TEXT:
+</t>
+<blockquote>
+For extensions not defined in [RFC4884], the translator passes the extensions as opaque bit strings and any IPv6 address literals contained therein will not be translated to IPv4 address literals; this may cause problems with processing of those ICMP extensions.
+</blockquote>
+<t>
+NEW TEXT:
+</t>
+<blockquote>
+For extensions not defined in [RFC4884], the translator passes the extensions as opaque bit strings and any IPv6 address literals contained therein will not be translated to IPv4 address literals; this may cause problems with processing of those ICMP extensions.
+If valid IPv6 source address in the outermost IPv6 header of the ICMPv6 messages  can not be mapped to an IPv4 address (the address does not match the prefix used in algorithmic mapping and there are no static or stateful entries for that address), the translator SHOULD follow the recommendations in draft-equinox-intarea-icmpext-xlat-source.
+</blockquote>
+</section>
+
+    <section anchor="security">
+      <name>Security Considerations</name>
+      <t>
+          TBD. 
+      </t>
+    </section>
+    <section anchor="privacy">
+      <name>Privacy Considerations</name>
+      <t>
+This document does not introduce any privacy considerations.
+      </t>
+    </section>
+    <section anchor="IANA">
+      <name>IANA Considerations</name>
+      <t>
+This memo includes no request to IANA.
+      </t>
+    </section>
+<section anchor="appendix">
+<name>Appendix</name>
+
+<section anchor="alg">
+<name>
+Adding Node Identification Extension Object: Suggested Algorithm
+</name>
 
 <section>
 <name>
@@ -231,6 +320,8 @@ Set the length field of the ICMP message to the length of the padded "original d
 </li>
 </ul>
 </section>
+
+
 <section>
 <name>
 Adding Node Identification Extension Object to Existing ICMP Extension Structure
@@ -262,56 +353,14 @@ If the resulting packet size exceeds the minimum IPv6 MTU: truncate the embedded
 </li>
 </ul>
 </section>
-</section>
+
+
+
 
 </section>
 
-<section>
-<name>
-Updates to RFC7915
-</name>
-<t>
-This document makes the following changes to Section 5.1 of <xref target="RFC7915"/>:
-</t>
-<t>
-The text in RFC7915 is as follows:
-</t>
-<blockquote>
-Source Address:  Mapped to an IPv4 address based on the algorithms presented in Section 6.
-</blockquote>
-<t>
-This document updates the text as follows:
-</t>
-<blockquote>
-Source Address:  Mapped to an IPv4 address based on the algorithms presented in Section 6.
-When translating ICMPv4 error messages to ICMPv6 error messages and the valid IPv6 source address in the outermost IPv6 header does not match the prefix used in algorithmic mapping, the translator SHOULD follow the recommendations in draft-equinox-intarea-icmpext-xlat-source.
-</blockquote>
-<t>
-This document also adds the following paragraph before the very last paragraph of Section 5.2 of <xref target="RFC7915"/> (before "Error payload:"):
-</t>
-<blockquote>
-If valid IPv6 source address in the outermost IPv6 header of the ICMPv6 messages does not match the prefix used in algorithmic mapping, the translator SHOULD follow the recommendations in draft-equinox-intarea-icmpext-xlat-source.
-</blockquote>
 </section>
 
-    <section anchor="security">
-      <name>Security Considerations</name>
-      <t>
-          TBD. 
-      </t>
-    </section>
-    <section anchor="privacy">
-      <name>Privacy Considerations</name>
-      <t>
-This document does not introduce any privacy considerations.
-      </t>
-    </section>
-    <section anchor="IANA">
-      <name>IANA Considerations</name>
-      <t>
-This memo includes no request to IANA.
-      </t>
-    </section>
   </middle>
 
   <back>
@@ -339,7 +388,7 @@ This memo includes no request to IANA.
       <name>Acknowledgements</name>
       <t>
           This document is the result of discussions with Thomas Jensen.
-          The authors would like to thank Darren Dukes, Bill Fenner for their feedback, comments and guidance.
+          The authors would like to thank  Lorenzo Colitti, Darren Dukes, Bill Fenner, Tobias Fiebig for their feedback, comments and guidance.
       </t>
     </section>
  </back>
