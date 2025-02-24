@@ -187,7 +187,7 @@ When adding the Node Identification Extension Object, the translator MUST includ
 </t>
 
 <t>
-This document doesn't prescribe the exact algorith for adding the Node Identification Extension Object when translating ICMPv6 messages tto ICMPv4.
+This document doesn't prescribe the exact algorith for adding the Node Identification Extension Object when translating ICMPv6 messages to ICMPv4.
 <xref target="alg"/> describes one possible approach, but the choice is left to implementors, as long as the following requirements are met:
 </t>
 <ul>
