@@ -18,7 +18,7 @@
   category="std"
   docName="draft-equinox-v6ops-icmpext-xlat-v6only-source-01"
   ipr="trust200902"
-  obsoletes=""
+  obsoletes="6791"
   updates="7915"
   submissionType="IETF"
   consensus="true"
@@ -140,6 +140,8 @@ Untranslatable IPv6 address: an IPv6 address which does not match the NAT64 pref
 
 </section>
 
+
+
     <section anchor="xlat">
       <name>Translation Behavior</name>
 
@@ -222,6 +224,34 @@ Such implementations SHOULD still translate ICMPv6 Packet Too Big from untransla
 
 
 </section>
+
+</section>
+
+<section>
+<name>Previous Work</name>
+<t>
+<xref target="RFC6791"/> proposes using the Interface Information Object and Interface IP Address Sub-Object defined in <xref target="RFC5837"/> to preserve the information about untranslatable IPv6 addresses.
+However it should be noted that Section 4.2 of <xref target="RFC5837"/> suggests that an IPv4 packet MUST only contain an IP Interface Sub-Object representint an IPv4 address.
+</t>
+<t>
+The solution proposes in this document has a number of benefits:
+</t>
+<ul>
+<li>
+<t>
+No changes to processing of the Interface Information Object is required.
+</t>
+</li>
+<li>
+<t>
+Using a dedicated IPV4 dummy address 192.0.0.8 might be benefitial to indicate to the user that it's not an actual IPv4 address of the intermediate node. 
+</t>
+</li>
+</ul>
+
+<t>
+Therefore this document deprecates <xref target="RFC6791"/>.
+</t>
 
 </section>
 
@@ -374,6 +404,7 @@ If the resulting packet size exceeds the minimum IPv6 MTU: truncate the embedded
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.4884.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6052.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.7915.xml"/>
+        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6791.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6877.xml"/>
 	<xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8174.xml"/>
 <xi:include href="https://bib.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-intarea-extended-icmp-nodeid.xml"/>
@@ -381,6 +412,7 @@ If the resulting packet size exceeds the minimum IPv6 MTU: truncate the embedded
      <references>
         <name>Informative References</name>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6146.xml"/>
+        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.5837.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.7755.xml"/>
       </references>
     </references>
@@ -388,7 +420,9 @@ If the resulting packet size exceeds the minimum IPv6 MTU: truncate the embedded
       <name>Acknowledgements</name>
       <t>
           This document is the result of discussions with Thomas Jensen.
-          The authors would like to thank  Lorenzo Colitti, Darren Dukes, Bill Fenner, Tobias Fiebig for their feedback, comments and guidance.
+          The authors would like to thank Lorenzo Colitti, Darren Dukes, Bill Fenner, Tobias Fiebig for their feedback, comments and guidance.
+The authors would like to particularly thank Tore Anderson for pointing out the existence and relevance of <xref target="RFC6791"/>.
+
       </t>
     </section>
  </back>
