@@ -16,7 +16,7 @@
 <rfc
   xmlns:xi="http://www.w3.org/2001/XInclude"
   category="std"
-  docName="draft-equinox-v6ops-icmpext-xlat-v6only-source-01"
+  docName="draft-equinox-v6ops-icmpext-xlat-v6only-source-02"
   ipr="trust200902"
   obsoletes="6791"
   updates="7915"
@@ -26,7 +26,7 @@
   version="3">
   <front>
     <title abbrev="icmpext-xlat-source">Using Dummy IPv4 Address and Node Identification Extensions for IP/ICMP translators (XLATs)</title>
-    <seriesInfo name="Internet-Draft" value="draft-equinox-v6ops-icmpext-xlat-v6only-source-01"/>
+    <seriesInfo name="Internet-Draft" value="draft-equinox-v6ops-icmpext-xlat-v6only-source-02"/>
 
     <author fullname="David 'equinox' Lamparter" initials="D" surname="Lamparter">
       <organization>NetDEF, Inc.</organization>
@@ -292,10 +292,24 @@ If valid IPv6 source address in the outermost IPv6 header of the ICMPv6 messages
 </blockquote>
 </section>
 
+
+<section>
+<name>Applicability Considerations</name>
+<t>
+The mechanism described in this document necessitates that the translator distinguish between ICMPv6 packets originating from untranslatable addresses requiring translation (triggered by an IPv4 packet translated to IPv6) and native IPv6 traffic that does not.
+When the translator employs dedicated IPv6 address(es) for IPv4 translation (e.g., a CLAT instance acquiring dedicated address(es) or a dedicated /64), this differentiation is straightforward.
+</t>
+<t>
+However, if the same IPv6 address is used for both IPv4 translation and native IPv6 traffic, the translator may require more complex techniques to differentiate.
+These techniques could include maintaining state and/or analyzing the invoking packet header within the ICMPv6 message body to determine if the invoking packet was translated
+</t>
+</section>
+
     <section anchor="security">
       <name>Security Considerations</name>
       <t>
-          TBD. 
+This document does not introduce new security considerations.
+
       </t>
     </section>
     <section anchor="privacy">
