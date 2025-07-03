@@ -227,11 +227,21 @@ Such implementations SHOULD still translate ICMPv6 Packet Too Big from untransla
 <t>
 <xref target="RFC6791"/> proposes using the Interface Information Object and Interface IP Address Sub-Object defined in <xref target="RFC5837"/> to preserve the information about untranslatable IPv6 addresses.
 However it should be noted that Section 4.2 of <xref target="RFC5837"/> suggests that an IPv4 packet MUST only contain an IP Interface Sub-Object representint an IPv4 address.
+Therefore using the mechanism described in <xref target="RFC6791"/> requires updating  <xref target="RFC5837"/>.
+</t>
+<t>
+More importantly, section 3.2 of <xref target="RFC6791"/> recommends using a single (or small pool of) public IPv4 address as the source address of the translated ICMP message.
+Such approach assumes that the translator is configured with an least one public IPv4 address, which is often not feasible for CLAT instances running on endpoints like mobile phones, laptops etc.
 </t>
 <t>
 The solution proposes in this document has a number of benefits:
 </t>
 <ul>
+<li>
+<t>
+Does not require public IPv4 addresses configured on the translator.
+</t>
+</li>
 <li>
 <t>
 No changes to processing of the Interface Information Object is required.
@@ -243,6 +253,7 @@ Using a dedicated IPV4 dummy address 192.0.0.8 might be benefitial to indicate t
 </t>
 </li>
 </ul>
+
 
 <t>
 Therefore this document deprecates <xref target="RFC6791"/>.
@@ -429,7 +440,7 @@ If the resulting packet size exceeds the minimum IPv6 MTU: truncate the embedded
       <name>Acknowledgements</name>
       <t>
           This document is the result of discussions with Thomas Jensen.
-          The authors would like to thank Lorenzo Colitti, Darren Dukes, Bill Fenner, Tobias Fiebig for their feedback, comments and guidance.
+          The authors would like to thank Ondrej Caletka, Lorenzo Colitti, Darren Dukes, Bill Fenner, Tobias Fiebig for their feedback, comments and guidance.
 The authors would like to particularly thank Tore Anderson for pointing out the existence and relevance of <xref target="RFC6791"/>.
 
       </t>
