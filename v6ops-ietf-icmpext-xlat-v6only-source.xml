@@ -101,10 +101,10 @@ Received ICMPv6 Time Exceeded are translated to ICMP Time Exceeded. If those pac
 Those packets are usually dropped and tools like traceroute can not represent IPv6 intermediate hops in any meaningful way. Such behaviour complicates troubleshooting. It's also confusing for users and increases operational costs, as users report packet loss in the network based on traceroute output.
 </t>
       <t>
-Some CLAT implementations are known to workaround this issue by representing IPv6 addresses in IPv4 traceroute by using a reserved IPv4 address space and using the hop limit as the last octet, so an IPv6 device 5 hops away is shown as 225.0.0.5 etc.
+Some CLAT implementations are known to workaround this issue by representing IPv6 addresses in IPv4 traceroute by using a reserved IPv4 address space and using the hop limit as the last octet, so an IPv6 address from 5 hops away is shown as 225.0.0.5 etc.
       </t>
 <t>
-It should be noted that the similar issue occurs in IPv6 Data Center Environments when an ICMPv6 error message needs to be sent to an IPv4-only client.
+It should be noted that the similar issue occurs in IPv6 Data Center Environments when an ICMPv6 error message is sent to an IPv4-only client.
 As per Section 4.8 of <xref target="RFC7755"/>, ICMPv6 error packets are usually dropped by the translator.
 </t>
 <t>
@@ -195,17 +195,12 @@ This document doesn't prescribe the exact algorith for adding the Node Identific
 <ul>
 <li>
 <t>
-The resulting ICMPv6 message contains the Node Identification Extension Object with the IP Address Sub-Object.
+The resulting ICMPv4 message contains the Node Identification Extension Object with the IP Address Sub-Object.
 </t>
 </li>
 <li>
 <t>
 The checksum field of the Extension Header (Section 7 of <xref target="RFC4884"/>) is updated accordingly.
-</t>
-</li>
-<li>
-<t>
-The resulting ICMPv6 packet size doesn't exceed the minimum IPv6 MTU.
 </t>
 </li>
 </ul>
