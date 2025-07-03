@@ -16,7 +16,7 @@
 <rfc
   xmlns:xi="http://www.w3.org/2001/XInclude"
   category="std"
-  docName="draft-equinox-v6ops-icmpext-xlat-v6only-source-02"
+  docName="draft-ietf-v6ops-icmpext-xlat-v6only-source-00"
   ipr="trust200902"
   obsoletes="6791"
   updates="7915"
@@ -26,7 +26,7 @@
   version="3">
   <front>
     <title abbrev="icmpext-xlat-source">Using Dummy IPv4 Address and Node Identification Extensions for IP/ICMP translators (XLATs)</title>
-    <seriesInfo name="Internet-Draft" value="draft-equinox-v6ops-icmpext-xlat-v6only-source-02"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-v6ops-icmpext-xlat-v6only-source-00"/>
 
     <author fullname="David 'equinox' Lamparter" initials="D" surname="Lamparter">
       <organization>NetDEF, Inc.</organization>
