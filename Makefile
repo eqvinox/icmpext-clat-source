@@ -1,4 +1,4 @@
-FILENAME := draft-equinox-v6ops-icmpext-xlat-v6only-source
+FILENAME := draft-ietf-v6ops-icmpext-xlat-v6only-source
 
 $(FILENAME).txt:
 	xml2rfc $(FILENAME).xml
