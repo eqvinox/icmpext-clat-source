@@ -88,7 +88,7 @@
       <name>Introduction</name>
       <t>
 To allow communication between IPv6-only and IPv4-only devices, IPv4/IPv6 translators translate IPv6 and IPv4 packet headers according to the IP/ICMP Translation Algorithm defined in <xref target="RFC7915"/>.
-For example, 464XLAT (<xref target="RFC6877"/>) defines an architecture for providing IPv4 connectivity across an IPv6-only network. The solution contains two key elements: provider-side translator (PLAT) and customer-side translator (CLAT). CLAT implementations translate private IPv4 addresses to global IPv6 addresses, and vice versa, as defined in <xref target="RFC7915"/>. 
+For example, 464XLAT (<xref target="RFC6877"/>) defines an architecture for providing IPv4 connectivity across an IPv6-only network. The solution contains two key elements: provider-side translator (PLAT, usually in a form of stateful NAT64, <xref target="RFC6146"/>)) and customer-side translator (CLAT). CLAT implementations translate private IPv4 addresses to global IPv6 addresses, and vice versa, as defined in <xref target="RFC7915"/>. 
 </t>
 <t>
 
@@ -234,7 +234,7 @@ More importantly, section 3.2 of <xref target="RFC6791"/> recommends using a sin
 Such approach assumes that the translator is configured with an least one public IPv4 address, which is often not feasible for CLAT instances running on endpoints like mobile phones, laptops etc.
 </t>
 <t>
-The solution proposes in this document has a number of benefits:
+The solution proposed in this document has a number of benefits:
 </t>
 <ul>
 <li>
@@ -266,7 +266,7 @@ Therefore this document deprecates <xref target="RFC6791"/>.
 Updates to RFC7915
 </name>
 <t>
-This document makes the following changes to Section 5.1 of <xref target="RFC7915"/>:
+This document makes the following changes to Section 5.1 ("Translating IPv6 Headers into IPv4 Headers")  of <xref target="RFC7915"/>:
 </t>
 <t>
 OLD TEXT</t>
@@ -278,7 +278,7 @@ NEW TEXT
 </t>
 <blockquote>
 Source Address:  Mapped to an IPv4 address based on the algorithms presented in Section 6.
-When translating ICMPv6 error messages to ICMPv4 error messages and the valid IPv6 source address in the outermost IPv6 header can not be mapped to an IPv4 address (the address does not match the prefix used in algorithmic mapping and there are no static or stateful entries for that address), the translator SHOULD follow the recommendations in draft-equinox-intarea-icmpext-xlat-source.
+When translating ICMPv6 error messages to ICMPv4 error messages and the valid IPv6 source address in the outermost IPv6 header can not be mapped to an IPv4 address (the address does not match the prefix used in algorithmic mapping and there are no static or stateful entries for that address), the translator SHOULD follow the recommendations in draft-ietf-v6ops-icmpext-xlat-v6only-source.
 </blockquote>
 <t>
 This document also updates the very last paragraph of Section 5.2 of <xref target="RFC7915"/> ("Error payload:") as follows:
@@ -440,7 +440,7 @@ If the resulting packet size exceeds the minimum IPv6 MTU: truncate the embedded
       <name>Acknowledgements</name>
       <t>
           This document is the result of discussions with Thomas Jensen.
-          The authors would like to thank Ondrej Caletka, Lorenzo Colitti, Darren Dukes, Bill Fenner, Tobias Fiebig for their feedback, comments and guidance.
+          The authors would like to thank Ondrej Caletka, Lorenzo Colitti, Darren Dukes, Bill Fenner, Tobias Fiebig, Jordi Palet for their feedback, comments and guidance.
 The authors would like to particularly thank Tore Anderson for pointing out the existence and relevance of <xref target="RFC6791"/>.
 
       </t>
