@@ -440,7 +440,7 @@ If the resulting packet size exceeds the minimum IPv6 MTU: truncate the embedded
       <name>Acknowledgements</name>
       <t>
           This document is the result of discussions with Thomas Jensen.
-          The authors would like to thank Ondrej Caletka, Lorenzo Colitti, Darren Dukes, Bill Fenner, Tobias Fiebig, Jordi Palet for their feedback, comments and guidance.
+          The authors would like to thank Ondřej Caletka, Lorenzo Colitti, Darren Dukes, Bill Fenner, Tobias Fiebig, and Jordi Palet Martínez for their feedback, comments and guidance.
 The authors would like to particularly thank Tore Anderson for pointing out the existence and relevance of <xref target="RFC6791"/>.
 
       </t>
