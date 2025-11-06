@@ -426,8 +426,8 @@ If the resulting packet size exceeds the minimum IPv6 MTU: truncate the embedded
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6052.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.7915.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6791.xml"/>
-	<xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8174.xml"/>
-<xi:include href="https://bib.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-intarea-extended-icmp-nodeid.xml"/>
+        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8174.xml"/>
+        <xi:include href="https://bib.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-intarea-extended-icmp-nodeid.xml"/>
       </references>
      <references>
         <name>Informative References</name>
