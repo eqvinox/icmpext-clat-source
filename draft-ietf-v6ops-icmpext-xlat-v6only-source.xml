@@ -357,6 +357,15 @@ These techniques could include maintaining state and/or analyzing the invoking p
 </t>
 </section>
 
+    <section anchor="ops">
+      <name>Operational Considerations</name>
+      <t>
+There are no new operations or manageability requirements introduced by this document.
+The changes proposed by this document are likely to simplify troubleshooting and improve manageability of networks, providing connectivity between IPv6-only and IPv4-only devices.
+      </t>
+    </section>
+
+
     <section anchor="security">
       <name>Security Considerations</name>
       <t>
