@@ -98,7 +98,7 @@ However, this is not the case for arbitrary global IPv6 addresses; those address
 <t>
 The most common scenario involves translating ICMPv6 messages sent by IPv6-only routers to IPv4-only destinations.
 For example, in IPv6-only data centers using SIIT,
-an intermediate router might need to return an ICMPv6 error to the IPv4 client (e.g., if the client runs
+an intermediate router might need to return an ICMPv6 error to the IPv4 host (e.g., if the host runs
 a traceroute or sends packets exceeding the router's interface MTU). 
 As per Section 4.8 of <xref target="RFC7755"/> the translator typically drops these ICMPv6 error packets because
 IPv6-only infrastructure routers rarely have IPv6 addresses that can be statelessly translated to IPv4. 
