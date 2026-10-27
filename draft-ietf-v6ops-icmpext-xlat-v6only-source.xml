@@ -67,9 +67,7 @@
     <abstract>
       <t>
           This document suggests that when a source IPv6 address of an ICMPv6 message can not be translated to an IPv4 address, and the protocol translator does not have any public IPv4 addresses available to source the translated packet from, the translator uses the dummy IPv4 address (192.0.0.8) to translate the IPv6 source address.
-This document also updates RFC6791 by proposing to utilize the ICMP extension for Node Identification (draft-ietf-intarea-extended-icmp-nodeid) to carry the original IPv6 source address of ICMPv6 messages.
-This document updates RFC6791, Stateless Source Address Mapping for ICMPv6 Packets and RFC7915, IP/ICMP Translation Algorithm.
-
+This document updates RFC6791, Stateless Source Address Mapping for ICMPv6 Packets, and RFC7915, IP/ICMP Translation Algorithm, by proposing to utilize the ICMP extension for Node Identification (draft-ietf-intarea-extended-icmp-nodeid) to carry the original IPv6 source address of ICMPv6 messages.
       </t>
     </abstract>
     <note removeInRFC="true">
@@ -361,8 +359,12 @@ These techniques could include maintaining state and/or analyzing the invoking p
       <name>Operational Considerations</name>
       <t>
 There are no new operations or manageability requirements introduced by this document.
-The changes proposed by this document are likely to simplify troubleshooting and improve manageability of networks, providing connectivity between IPv6-only and IPv4-only devices.
+The changes proposed by this document are likely to simplify troubleshooting and improve manageability of networks that provide connectivity between IPv6-only and IPv4-only devices.
+To fully benefit from the proposed approach network administrators need to use tools (such as traceroute) which are able interpret and display the additional information contained in a Node Identification Extension Object and an IP Address Sub-Object.
       </t>
+<t>
+In scenarios when CLAT function is performed not by a host but by a router (such as a CPE providing IPv4 connectivity downstream via an IPv6-only uplink), packets with source address set to 192.0.0.8 can be sent by the CPE downstream.
+</t>
     </section>
 
 
