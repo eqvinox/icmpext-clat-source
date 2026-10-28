@@ -18,8 +18,7 @@
   category="std"
   docName="draft-ietf-v6ops-icmpext-xlat-v6only-source-01"
   ipr="trust200902"
-  obsoletes="6791"
-  updates="7915"
+  updates="6791, 7915"
   submissionType="IETF"
   consensus="true"
   xml:lang="en"
@@ -55,7 +54,7 @@
       </address>
     </author>
 
-    <date year="2025"/>
+    <date year="2026"/>
     <area>Ops</area>
     <workgroup>IPv6 operations</workgroup>
     <keyword>ipv6</keyword>
@@ -67,9 +66,8 @@
 
     <abstract>
       <t>
-          This document suggests that when a source IPv6 address of an ICMPv6 message can not be translated to an IPv4 address, the protocol translators use the dummy IPv4 address (192.0.0.8) to translate the IPv6 source address, and utilize the ICMP extension for Node Identification (draft-ietf-intarea-extended-icmp-nodeid) to carry the original IPv6 source address of ICMPv6 messages.
-This document obsoletes RFC6791, Stateless Source Address Mapping for ICMPv6 Packets and updates IP/ICMP Translation Algorithm (RFC7915).
-
+          This document suggests that when a source IPv6 address of an ICMPv6 message can not be translated to an IPv4 address, and the protocol translator does not have any public IPv4 addresses available to source the translated packet from, the translator uses the dummy IPv4 address (192.0.0.8) to translate the IPv6 source address.
+This document updates RFC6791, Stateless Source Address Mapping for ICMPv6 Packets, and RFC7915, IP/ICMP Translation Algorithm, by proposing to utilize the ICMP extension for Node Identification (draft-ietf-intarea-extended-icmp-nodeid) to carry the original IPv6 source address of ICMPv6 messages.
       </t>
     </abstract>
     <note removeInRFC="true">
@@ -91,26 +89,33 @@ This document obsoletes RFC6791, Stateless Source Address Mapping for ICMPv6 Pac
       <name>Introduction</name>
       <t>
 To allow communication between IPv6-only and IPv4-only devices, IPv4/IPv6 translators translate IPv6 and IPv4 packet headers according to the IP/ICMP Translation Algorithm defined in <xref target="RFC7915"/>.
-For example, 464XLAT (<xref target="RFC6877"/>) defines an architecture for providing IPv4 connectivity across an IPv6-only network. The solution contains two key elements: provider-side translator (PLAT, usually in a form of stateful NAT64, <xref target="RFC6146"/>)) and customer-side translator (CLAT). CLAT implementations translate private IPv4 addresses to global IPv6 addresses, and vice versa, as defined in <xref target="RFC7915"/>. 
+For example, 464XLAT (<xref target="RFC6877"/>) defines an architecture for providing IPv4 connectivity across an IPv6-only network. The solution contains two key elements: provider-side translator (PLAT, usually in a form of stateful NAT64, <xref target="RFC6146"/>)) and customer-side translator (CLAT). CLAT implementations translate private IPv4 addresses to global IPv6 addresses, and vice versa, as defined in <xref target="RFC7915"/>. Another common scenario is IPv6-only data centers using Stateless IP/ICMP Translation Algorithm (SIIT [RFC7755]) to provide connectivity between IPv6-only servers and IPv4-only clients.
 </t>
 <t>
-
 To map IPv4 addresses to IPv6 ones the translators use the translation prefix (either a well-known or a network-specific one, see <xref target="RFC6052"/>). The resulting IPv6 addresses can be statelessly translated back to IPv4.
 However, this is not the case for arbitrary global IPv6 addresses; those addresses can only be translated to IPv4 by stateful translators and only if a corresponding translation rule exists.
 </t>
 <t>
-One scenario where this is necessary is translating ICMPv6 error messages sent by intermediate nodes to the CLAT address in a 464XLAT environment. The most typical example is a diagnostic tool like traceroute sending packets to an IPv4 destination from an IPv6-only host.
-Received ICMPv6 Time Exceeded messages are translated to ICMP Time Exceeded messages. If those packets were originated from an IPv4 address and translated to ICMPv6 by the PLAT (NAT64) device, then the source address of such a packet can be mapped back to IPv4 by removing the translation prefix. However ICMPv6 error messages sent by devices located between the IPv6-only host and the NAT64 device have "native" IPv6 source addresses, which cannot be mapped back to IPv4.
-Those packets are usually dropped and tools like traceroute can not represent IPv6 intermediate hops in any meaningful way. Such behaviour complicates troubleshooting.
-It might also be confusing for users and increases operational costs, as users report packet loss in the network based on traceroute output.
+The most common scenario involves translating ICMPv6 messages sent by IPv6-only routers to IPv4-only destinations.
+For example, in IPv6-only data centers using SIIT,
+an intermediate router might need to return an ICMPv6 error to the IPv4 host (e.g., if the host runs
+a traceroute or sends packets exceeding the router's interface MTU). 
+As per Section 4.8 of <xref target="RFC7755"/> the translator typically drops these ICMPv6 error packets because
+IPv6-only infrastructure routers rarely have IPv6 addresses that can be statelessly translated to IPv4. 
+This behavior complicates troubleshooting, confuses users, and increases operational costs when users report
+network packet loss based on incomplete traceroute results.
 </t>
 <t>
-It should be noted that a similar issue occurs in IPv6 Data Center Environments when an ICMPv6 error message is sent to an IPv4-only client.
-As per Section 4.8 of <xref target="RFC7755"/>, ICMPv6 error packets are usually dropped by the translator.
+<xref target="RFC6791"/> discusses this issue in more details and recommends that translators use a single (or small pool of)
+public IPv4 address as the source address of the translated ICMP message.
+However that approach assumes that the translator is configured with at least one public IPv4 address, which is often not the case for CLAT: CLAT instances running on endpoints (mobile phones, laptops etc) are normally using a single non-global IPv4 address from 192.0.0.0/29 range (<xref target="I-D.ietf-v6ops-claton"/>).
 </t>
 <t>
-<xref target="I-D.ietf-intarea-extended-icmp-nodeid"/> defines the Node Identification Object which can carry an IP Address Sub-Object, containing an IP address.
-This document proposes that when an ICMPv6 error message is translated to an ICMP one, and the IPv6 source address cannot be mapped or translated to an IPv4 one, the translator uses the dummy IPv4 address as the IPv4 source and appends a Node Identification Object with an IP Address Sub-Object, containing the IPv6 address of the original ICMPv6 error message.
+In addition to translating ICMPv6 messages, it is desirable to preserve the original IPv6 source address and make it available to applications.
+For example, tools like traceroute would be able to display it to the user.
+<xref target="RFC6791"/> suggests using an ICMP extenstion defined in <xref target="RFC5837"/> to carry the source IPv6 addresses of the original ICMPv6.
+Hwoever that approach has some drawbacks, as discussed in the following sections.
+This document recommens using the Node Identification Object dnd an IP Address Sub-Object defined in <xref target="I-D.ietf-intarea-extended-icmp-nodeid"/> instead.
 </t>
     </section>
 
@@ -149,8 +154,20 @@ Untranslatable IPv6 address: an IPv6 address which does not match the NAT64 pref
       <section anchor="xlat-overview">
       <name>Overview</name>
       <t>
-          Whenever a translator translates an ICMPv6 Destination Unreachable, ICMPv6 Time Exceeded or ICMPv6 Packet Too Big (<xref target="RFC4443"/>) to the corresponding ICMPv4 (<xref target="RFC0792"/>) message, and the IPv6 source address in the outermost IPv6 header is untranslatable, the translator SHOULD use the dummy IPv4 address (192.0.0.8) as the IPv4 source address for the translated packet.
+          Whenever a translator translates an ICMPv6 Destination Unreachable, ICMPv6 Time Exceeded or ICMPv6 Packet Too Big (<xref target="RFC4443"/>) to the corresponding ICMPv4 (<xref target="RFC0792"/>) message, and the IPv6 source address in the outermost IPv6 header is untranslatable, the translator MUST use the following logic to select the IPv4 source address for the translated packet:
 </t>
+<ul>
+<li>
+<t>
+If the translator has a public IPv4 address (or a pool of such addresses) available, it SHOULD use a public IPv4 address, following recommendations in Section 3.2 and Section 5 of <xref target="RFC6791"/>.
+</t>
+</li>
+<li>
+<t>
+In all other cases the translator MUST use the dummy IPv4 address (192.0.0.8).
+</t>
+</li>
+</ul>
 <t>
 To preserve the original IPv6 source address of the packet, the translator SHOULD append a Node Identification Object (<xref target="I-D.ietf-intarea-extended-icmp-nodeid"/>) with an IP Address Sub-Object containing the IPv6 source address of the original ICMPv6 packet.
 </t>
@@ -224,15 +241,15 @@ Such implementations SHOULD still translate ICMPv6 Packet Too Big from untransla
 </section>
 
 <section>
-<name>Previous Work</name>
+<name>Updates to RFC6791</name>
 <t>
 <xref target="RFC6791"/> proposes using the Interface Information Object and Interface IP Address Sub-Object defined in <xref target="RFC5837"/> to preserve information about untranslatable IPv6 addresses.
-However it should be noted that Section 4.2 of <xref target="RFC5837"/> suggests that an IPv4 packet MUST only contain an IP Interface Sub-Object representing an IPv4 address.
+However Section 4.2 of <xref target="RFC5837"/> suggests that an IPv4 packet MUST only contain an IP Interface Sub-Object representing an IPv4 address.
 Therefore using the mechanism described in <xref target="RFC6791"/> requires updating  <xref target="RFC5837"/>.
 </t>
 <t>
 More importantly, Section 3.2 of <xref target="RFC6791"/> recommends using a single (or small pool of) public IPv4 address as the source address of the translated ICMP message.
-Such an approach assumes that the translator is configured with at least one public IPv4 address, which is often not feasible for CLAT instances running on endpoints like mobile phones, laptops etc.
+As discussed earlier, this approach works only if the translator has a pubic IPv4 address available, and therefore is often not feasible for translators performing CLAT functions.
 </t>
 <t>
 The solution proposed in this document has a number of benefits:
@@ -257,8 +274,20 @@ Using a dedicated IPV4 dummy address 192.0.0.8 indicates to the user that it's n
 
 
 <t>
-Therefore this document deprecates <xref target="RFC6791"/>.
+Therefore this document makes the following changes to <xref target="RFC6791"/>.
 </t>
+<ul>
+<li>
+<t>
+If the translator has no public IPv4 available, it MUST use a dummy IPv4 address 192.0.0.8 as a source of the translated ICMP packets.
+</t>
+</li>
+<li>
+<t>
+Instead of using the ICMP extension defined in <xref target="RFC5837"/>, the translator SHOULD use a Node Identification Object (<xref target="I-D.ietf-intarea-extended-icmp-nodeid"/>) with an IP Address Sub-Object, as described in <xref target="xlat"/> of this document.
+</t>
+</li>
+</ul>
 
 </section>
 
@@ -311,6 +340,19 @@ However, if the same IPv6 address is used for both IPv4 translation and native I
 These techniques could include maintaining state and/or analyzing the invoking packet header within the ICMPv6 message body to determine if the invoking packet was translated
 </t>
 </section>
+
+    <section anchor="ops">
+      <name>Operational Considerations</name>
+      <t>
+There are no new operations or manageability requirements introduced by this document.
+The changes proposed by this document are likely to simplify troubleshooting and improve manageability of networks that provide connectivity between IPv6-only and IPv4-only devices.
+To fully benefit from the proposed approach network administrators need to use tools (such as traceroute) which are able interpret and display the additional information contained in a Node Identification Extension Object and an IP Address Sub-Object.
+      </t>
+<t>
+In scenarios when CLAT function is performed not by a host but by a router (such as a CPE providing IPv4 connectivity downstream via an IPv6-only uplink), packets with source address set to 192.0.0.8 can be sent by the CPE downstream.
+</t>
+    </section>
+
 
     <section anchor="security">
       <name>Security Considerations</name>
@@ -435,6 +477,7 @@ If the resulting packet size exceeds the minimum IPv6 MTU: truncate the embedded
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.5837.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6877.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.7755.xml"/>
+        <xi:include href="https://bib.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-v6ops-claton.xml"/>
       </references>
     </references>
     <section anchor="Acknowledgements" numbered="false">
