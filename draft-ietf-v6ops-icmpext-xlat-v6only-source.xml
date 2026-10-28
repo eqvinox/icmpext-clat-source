@@ -16,7 +16,7 @@
 <rfc
   xmlns:xi="http://www.w3.org/2001/XInclude"
   category="std"
-  docName="draft-ietf-v6ops-icmpext-xlat-v6only-source-01"
+  docName="draft-ietf-v6ops-icmpext-xlat-v6only-source-02"
   ipr="trust200902"
   updates="6791, 7915"
   submissionType="IETF"
@@ -25,7 +25,7 @@
   version="3">
   <front>
     <title abbrev="icmpext-xlat-source">Using Dummy IPv4 Address and Node Identification Extensions for IP/ICMP translators (XLATs)</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-v6ops-icmpext-xlat-v6only-source-01"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-v6ops-icmpext-xlat-v6only-source-02"/>
 
     <author fullname="David 'equinox' Lamparter" initials="D" surname="Lamparter">
       <organization>NetDEF, Inc.</organization>
@@ -484,7 +484,7 @@ If the resulting packet size exceeds the minimum IPv6 MTU: truncate the embedded
       <name>Acknowledgements</name>
       <t>
           This document is the result of discussions with Thomas Jensen.
-          The authors would like to thank Ondřej Caletka, Lorenzo Colitti, Darren Dukes, Bill Fenner, Tobias Fiebig, and Jordi Palet Martínez for their feedback, comments and guidance.
+          The authors would like to thank Mohamed Boucadair, Ondřej Caletka, Lorenzo Colitti, Darren Dukes, Bill Fenner, Tobias Fiebig, and Jordi Palet Martínez for their feedback, comments and guidance.
 The authors would like to particularly thank Tore Anderson for pointing out the existence and relevance of <xref target="RFC6791"/>.
 
       </t>
