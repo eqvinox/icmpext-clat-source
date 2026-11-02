@@ -239,7 +239,7 @@ Untranslatable IPv6 address: an IPv6 address which does not match the NAT64 pref
 
 <t>
 Consider a simplified example topology shown on Fig.1.
-If traceroute is executed from the IPv6-only host running CLAT towards an IPv4-only destination 203.0.113.10, then the host receives the folowing ICMP error messages:
+If traceroute is executed from the IPv6-only host running CLAT towards an IPv4-only destination 203.0.113.10, then the host receives the folowing ICMP error messages (note that choice of a source address for ICMP errors is implementation-dependent and can vary from vendor to vendor):
 </t>
 <ul>
 <li>
