@@ -16,7 +16,7 @@
 <rfc
   xmlns:xi="http://www.w3.org/2001/XInclude"
   category="std"
-  docName="draft-ietf-v6ops-icmpext-xlat-v6only-source-02"
+  docName="draft-ietf-v6ops-icmpext-xlat-v6only-source-03"
   ipr="trust200902"
   updates="6791, 7915"
   submissionType="IETF"
@@ -25,7 +25,7 @@
   version="3">
   <front>
     <title abbrev="icmpext-xlat-source">Using Dummy IPv4 Address and Node Identification Extensions for IP/ICMP translators (XLATs)</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-v6ops-icmpext-xlat-v6only-source-02"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-v6ops-icmpext-xlat-v6only-source-03"/>
 
     <author fullname="David 'equinox' Lamparter" initials="D" surname="Lamparter">
       <organization>NetDEF, Inc.</organization>
@@ -89,11 +89,11 @@ This document updates RFC6791, Stateless Source Address Mapping for ICMPv6 Packe
       <name>Introduction</name>
       <t>
 To allow communication between IPv6-only and IPv4-only devices, IPv4/IPv6 translators translate IPv6 and IPv4 packet headers according to the IP/ICMP Translation Algorithm defined in <xref target="RFC7915"/>.
-For example, 464XLAT (<xref target="RFC6877"/>) defines an architecture for providing IPv4 connectivity across an IPv6-only network. The solution contains two key elements: provider-side translator (PLAT, usually in a form of stateful NAT64, <xref target="RFC6146"/>)) and customer-side translator (CLAT). CLAT implementations translate private IPv4 addresses to global IPv6 addresses, and vice versa, as defined in <xref target="RFC7915"/>. Another common scenario is IPv6-only data centers using Stateless IP/ICMP Translation Algorithm (SIIT [RFC7755]) to provide connectivity between IPv6-only servers and IPv4-only clients.
+For example, 464XLAT (<xref target="RFC6877"/>) defines an architecture for providing IPv4 connectivity across an IPv6-only network. The solution contains two key elements: provider-side translator (PLAT, usually in a form of stateful NAT64, <xref target="RFC6146"/>)) and customer-side translator (CLAT). CLAT implementations translate local IPv4 addresses to global IPv6 addresses, and vice versa, as defined in <xref target="RFC6052"/>. Another common scenario is IPv6-only data centers using Stateless IP/ICMP Translation Algorithm (SIIT [RFC7755]) to provide connectivity between IPv6-only servers and IPv4-only clients.
 </t>
 <t>
 To map IPv4 addresses to IPv6 ones the translators use the translation prefix (either a well-known or a network-specific one, see <xref target="RFC6052"/>). The resulting IPv6 addresses can be statelessly translated back to IPv4.
-However, this is not the case for arbitrary global IPv6 addresses; those addresses can only be translated to IPv4 by stateful translators and only if a corresponding translation rule exists.
+However, this is not the case for general global IPv6 addresses; those addresses can only be translated to IPv4 by stateful translators and only if a corresponding translation rule exists.
 </t>
 <t>
 The most common scenario involves translating ICMPv6 messages sent by IPv6-only routers to IPv4-only destinations.
@@ -484,7 +484,7 @@ If the resulting packet size exceeds the minimum IPv6 MTU: truncate the embedded
       <name>Acknowledgements</name>
       <t>
           This document is the result of discussions with Thomas Jensen.
-          The authors would like to thank Mohamed Boucadair, Ondřej Caletka, Lorenzo Colitti, Darren Dukes, Bill Fenner, Tobias Fiebig, and Jordi Palet Martínez for their feedback, comments and guidance.
+          The authors would like to thank Mohamed Boucadair, Ondřej Caletka, Lorenzo Colitti, Darren Dukes, Bill Fenner, Tobias Fiebig, Jordi Palet Martínez,Chongfeng Xie for their feedback, comments and guidance.
 The authors would like to particularly thank Tore Anderson for pointing out the existence and relevance of <xref target="RFC6791"/>.
 
       </t>
