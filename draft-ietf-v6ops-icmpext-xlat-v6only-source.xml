@@ -115,7 +115,7 @@ In addition to translating ICMPv6 messages, it is desirable to preserve the orig
 For example, tools like traceroute would be able to display it to the user.
 <xref target="RFC6791"/> suggests using an ICMP extenstion defined in <xref target="RFC5837"/> to carry the source IPv6 addresses of the original ICMPv6.
 However that approach has some drawbacks, as discussed in the following sections.
-This document recommens using the Node Identification Object wth an IP Address Sub-Object defined in <xref target="I-D.ietf-intarea-extended-icmp-nodeid"/> instead.
+This document recommends using the Node Identification Object with an IP Address Sub-Object defined in <xref target="I-D.ietf-intarea-extended-icmp-nodeid"/> instead.
 </t>
     </section>
 
@@ -489,6 +489,22 @@ NEW TEXT:
 For extensions not defined in [RFC4884], the translator passes the extensions as opaque bit strings and any IPv6 address literals contained therein will not be translated to IPv4 address literals; this may cause problems with processing of those ICMP extensions.
 If the valid IPv6 source address in the outermost IPv6 header of the ICMPv6 messages  cannot be mapped to an IPv4 address (the address does not match the prefix used in algorithmic mapping and there are no static or stateful entries for that address), the translator SHOULD follow the recommendations in draft-equinox-intarea-icmpext-xlat-source.
 </blockquote>
+
+<t>
+Additionally, this documents updates Section 6 (Mapping of IP Addresses) of <xref target="RFC7915"/>:
+</t>
+<t>
+OLD TEXT:
+</t>
+<blockquote>
+The stateless translator SHOULD support [RFC6791] for handling ICMP/ICMPv6 packets.
+</blockquote>
+<t>
+NEW TEXT:
+</t>
+<blockquote>
+The stateless translator SHOULD support [RFC6791] and draft-ietf-v6ops-icmpext-xlat-v6only-source for handling ICMP/ICMPv6 packets.
+</blockquote>
 </section>
 
 
@@ -647,7 +663,7 @@ If the resulting packet size exceeds the minimum IPv6 MTU: truncate the embedded
       <name>Acknowledgements</name>
       <t>
           This document is the result of discussions with Thomas Jensen.
-          The authors would like to thank Mohamed Boucadair, Ondřej Caletka, Lorenzo Colitti, Darren Dukes, Bill Fenner, Tobias Fiebig, Jordi Palet Martínez,Chongfeng Xie for their feedback, comments and guidance.
+          The authors would like to thank Mohamed Boucadair, Ondřej Caletka, Lorenzo Colitti, Darren Dukes, Bill Fenner, Tobias Fiebig, Jordi Palet Martínez, and Chongfeng Xie for their feedback, comments and guidance.
 The authors would like to particularly thank Tore Anderson for pointing out the existence and relevance of <xref target="RFC6791"/>.
 
       </t>
